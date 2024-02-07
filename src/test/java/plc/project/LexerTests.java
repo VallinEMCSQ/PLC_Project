@@ -23,7 +23,10 @@ public class LexerTests {
                 Arguments.of("Alphabetic", "getName", true),
                 Arguments.of("Alphanumeric", "thelegend27", true),
                 Arguments.of("Leading Hyphen", "-five", false),
-                Arguments.of("Leading Digit", "1fish2fish3fishbluefish", false)
+                Arguments.of("Leading Digit", "1fish2fish3fishbluefish", false),
+                Arguments.of("Single Character", "a", true),
+                Arguments.of("Hyphenated", "a-b-c", true),
+                Arguments.of("Underscores", "___", false)
         );
     }
 
@@ -38,7 +41,10 @@ public class LexerTests {
                 Arguments.of("Single Digit", "1", true),
                 Arguments.of("Multiple Digits", "12345", true),
                 Arguments.of("Negative", "-1", true),
-                Arguments.of("Leading Zero", "01", false)
+                Arguments.of("Leading Zero", "01", false),
+                Arguments.of("Decimal", "123.456", false),
+                Arguments.of("Comma Seperated", "1,234", false),
+                Arguments.of("Leading Zeros", "007", false)
         );
     }
 
@@ -53,7 +59,10 @@ public class LexerTests {
                 Arguments.of("Multiple Digits", "123.456", true),
                 Arguments.of("Negative Decimal", "-1.0", true),
                 Arguments.of("Trailing Decimal", "1.", false),
-                Arguments.of("Leading Decimal", ".5", false)
+                Arguments.of("Leading Decimal", ".5", false),
+                Arguments.of("Single Digit", "1", false),
+                Arguments.of("Trailing Zeros", "7.000", true),
+                Arguments.of("Double Decimal", "1..0", false)
         );
     }
 
@@ -68,7 +77,9 @@ public class LexerTests {
                 Arguments.of("Alphabetic", "\'c\'", true),
                 Arguments.of("Newline Escape", "\'\\n\'", true),
                 Arguments.of("Empty", "\'\'", false),
-                Arguments.of("Multiple", "\'abc\'", false)
+                Arguments.of("Multiple", "\'abc\'", false),
+                Arguments.of("Unterminated", "\'", false),
+                Arguments.of("Newline", "\\'␊\\'", false)
         );
     }
 
@@ -84,7 +95,9 @@ public class LexerTests {
                 Arguments.of("Alphabetic", "\"abc\"", true),
                 Arguments.of("Newline Escape", "\"Hello,\\nWorld\"", true),
                 Arguments.of("Unterminated", "\"unterminated", false),
-                Arguments.of("Invalid Escape", "\"invalid\\escape\"", false)
+                Arguments.of("Invalid Escape", "\"invalid\\escape\"", false),
+                Arguments.of("Symbols", "\"!@#$%^&*()\"", true),
+                Arguments.of("Newline Unterminated", "\"unterminated␊\"", false)
         );
     }
 
@@ -100,7 +113,9 @@ public class LexerTests {
                 Arguments.of("Character", "(", true),
                 Arguments.of("Comparison", "!=", true),
                 Arguments.of("Space", " ", false),
-                Arguments.of("Tab", "\t", false)
+                Arguments.of("Tab", "\t", false),
+                Arguments.of("Symbol", "$", false),
+                Arguments.of("Plus Sign", "+", false)
         );
     }
 
