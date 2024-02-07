@@ -35,13 +35,13 @@ public final class Lexer {
 
         while(chars.has(0)){
             // Whitespace
-            if(match(" \b\n\r\t")){
+            if(peek("[ \b\n\r\t]")){
+                match("[ \b\n\r\t]");
                 chars.skip();
             }else {
                 tokens.add(lexToken());
             }
         }
-
         return tokens;
     }
 
@@ -102,7 +102,7 @@ public final class Lexer {
     public Token lexCharacter() {
         match("'");
         // Checks for escape character
-        if(peek("\\\\") || peek( "[^'\\n\\r]")){
+        if(peek("\\\\") || peek( "([^'\\n\\r])")){
             if(peek("\\\\")){
                 lexEscape();
             }
@@ -120,11 +120,22 @@ public final class Lexer {
 
     public Token lexString() {
         match("\"");
-        /**while(peek("[a-zA-Z]") || peek("\\\\") || peek("")){
-            if(match("")){
-
+        while(peek("\\\\", "[bnrt'\\\"\\\\]") || peek("[^\\\"\\n\\r\\\\]")){
+            if(peek("\\\\", "[bnrt'\\\"\\\\]")){
+                lexEscape();
+            } else if (peek("[^\\\"\\n\\r\\\\]")) {
+                match("[^\\\"\\n\\r\\\\]");
             }
-        }**/
+        }
+        if(peek("\"")){
+            match("\"");
+        }
+        else {
+            if(peek("\\\\")){
+                match("\\\\");
+            }
+            throw new ParseException("Unterminated String", chars.index);
+        }
         return chars.emit(Token.Type.STRING);
     }
 
