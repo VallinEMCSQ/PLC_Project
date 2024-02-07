@@ -38,7 +38,8 @@ public class LexerTests {
                 Arguments.of("Single Digit", "1", true),
                 Arguments.of("Multiple Digits", "12345", true),
                 Arguments.of("Negative", "-1", true),
-                Arguments.of("Leading Zero", "01", false)
+                Arguments.of("Leading Zero", "01", false),
+                Arguments.of("No Decimal Leading Zero", "001", false)
         );
     }
 
@@ -53,7 +54,10 @@ public class LexerTests {
                 Arguments.of("Multiple Digits", "123.456", true),
                 Arguments.of("Negative Decimal", "-1.0", true),
                 Arguments.of("Trailing Decimal", "1.", false),
-                Arguments.of("Leading Decimal", ".5", false)
+                Arguments.of("Leading Decimal", ".5", false),
+                Arguments.of("Negative Decimal Zero", "-0.0", true),
+                Arguments.of("Decimal No Leading Zero", ".0", false),
+                Arguments.of("Decimal No Leading Zero", "01.3", false)
         );
     }
 
@@ -125,7 +129,22 @@ public class LexerTests {
                         new Token(Token.Type.STRING, "\"Hello, World!\"", 6),
                         new Token(Token.Type.OPERATOR, ")", 21),
                         new Token(Token.Type.OPERATOR, ";", 22)
+                )),
+                Arguments.of("Example 3", "<=", Arrays.asList(
+                        new Token(Token.Type.OPERATOR, "<", 0),
+                        new Token(Token.Type.OPERATOR, "=", 1)
+                )),
+                Arguments.of("Example 4", "1-0", Arrays.asList(
+                        new Token(Token.Type.INTEGER, "1", 0),
+                        new Token(Token.Type.INTEGER, "-0", 1)
+                )),
+                Arguments.of("Example 5", " ", Arrays.asList(
+
+                )),
+                Arguments.of("Example 6", "\t", Arrays.asList(
+
                 ))
+
         );
     }
 
@@ -134,6 +153,16 @@ public class LexerTests {
         ParseException exception = Assertions.assertThrows(ParseException.class,
                 () -> new Lexer("\"unterminated").lex());
         Assertions.assertEquals(13, exception.getIndex());
+
+        ParseException exception2 = Assertions.assertThrows(ParseException.class,
+                () -> new Lexer("\"invalid\\escape\"").lex());
+        Assertions.assertEquals(9, exception2.getIndex());
+
+        ParseException exception3 = Assertions.assertThrows(ParseException.class,
+                () -> new Lexer("\'\\e\'").lex());
+        Assertions.assertEquals(2, exception3.getIndex());
+
+
     }
 
     /**

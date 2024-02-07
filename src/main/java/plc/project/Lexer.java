@@ -86,7 +86,7 @@ public final class Lexer {
         // If first number is 0, must be proceeded by decimal. Otherwise, return integer token
         match("0");
 
-        if(peek(".") && !peek(";")) {
+        if(peek(".") && !peek(";") && !peek("-")) {
             match(".");
             if(!peek("[0-9]")){
                 throw new ParseException("Invalid Decimal", chars.index);
@@ -96,7 +96,10 @@ public final class Lexer {
             }
             return chars.emit(Token.Type.DECIMAL);
         }
-        else{
+        else if(peek("[0-9]")){
+            throw new ParseException("Invalid Number", chars.index);
+        }
+        else {
             return chars.emit(Token.Type.INTEGER);
         }
     }
