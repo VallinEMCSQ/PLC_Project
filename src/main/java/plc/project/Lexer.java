@@ -85,7 +85,9 @@ public final class Lexer {
         }
         // If first number is 0, must be proceeded by decimal. Otherwise, return integer token
         match("0");
-        if(match(".")) {
+
+        if(peek(".") && !peek(";")) {
+            match(".");
             if(!peek("[0-9]")){
                 throw new ParseException("Invalid Decimal", chars.index);
             }
@@ -110,7 +112,8 @@ public final class Lexer {
                 match("[^'\\n\\r]");
             }
         }
-        if(match("'")){
+        if(peek("'")){
+            match("'");
             return chars.emit(Token.Type.CHARACTER);
         }
         else{
@@ -147,13 +150,13 @@ public final class Lexer {
     }
 
     public Token lexOperator() {
-        if(match("[!=]", "=")){
+        if(match("[!=]", "=") || match("=")){
             return chars.emit(Token.Type.OPERATOR);
         } else if(match("&", "&")){
             return chars.emit(Token.Type.OPERATOR);
         } else if (match("|", "|")) {
             return chars.emit(Token.Type.OPERATOR);
-        } else if(match("[<()>]")){
+        } else if(match("[<(;)>]")){
             // Might need to be if else
             // Any other character except whitespace
             return chars.emit(Token.Type.OPERATOR);
