@@ -103,6 +103,9 @@ public final class Lexer {
 
     public Token lexCharacter() {
         match("'");
+        if(peek("'")){
+            throw new ParseException("Invalid Character", chars.index);
+        }
         // Checks for escape character
         if(peek("\\\\") || peek( "([^'\\n\\r])")){
             if(peek("\\\\")){
