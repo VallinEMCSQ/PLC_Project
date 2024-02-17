@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="Passing all except char test" />
+    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="Passing all given test cases and extras">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/plc/project/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/plc/project/Parser.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,8 +34,9 @@
   "keyToString": {
     "Gradle.Build PLC_Project.executor": "Run",
     "JUnit.LexerTests.executor": "Run",
-    "JUnit.LexerTests.testCharacter.executor": "Debug",
+    "JUnit.LexerTests.testCharacter.executor": "Run",
     "JUnit.LexerTests.testExamples.executor": "Run",
+    "JUnit.LexerTests.testException.executor": "Run",
     "JUnit.ParserExpressionTests.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -57,7 +61,7 @@
       <recent name="C:\Users\valca\OneDrive\Documents\UF School\Spring 2024\CIS4020\IntelliJ Projects\PLC_Project\src\main\java\plc\project" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.ParserExpressionTests">
+  <component name="RunManager">
     <configuration name="LexerTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PLC_Project.test" />
       <extension name="coverage">
@@ -105,7 +109,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ParserExpressionTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="LexerTests.testException" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PLC_Project.test" />
       <extension name="coverage">
         <pattern>
@@ -114,16 +118,17 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.ParserExpressionTests" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.LexerTests" />
+      <option name="METHOD_NAME" value="testException" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.ParserExpressionTests" />
         <item itemvalue="JUnit.LexerTests" />
+        <item itemvalue="JUnit.LexerTests.testException" />
         <item itemvalue="JUnit.LexerTests.testCharacter" />
         <item itemvalue="JUnit.LexerTests.testExamples" />
       </list>
@@ -146,8 +151,7 @@
       <updated>1706724956597</updated>
       <workItem from="1706724957699" duration="4125000" />
       <workItem from="1706734014352" duration="3050000" />
-      <workItem from="1707161916713" duration="21448000" />
-      <workItem from="1708146957160" duration="6093000" />
+      <workItem from="1707161916713" duration="24405000" />
     </task>
     <task id="LOCAL-00001" summary="Mostly finished lexer">
       <option name="closed" value="true" />
@@ -173,7 +177,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707275457343</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Passing all given test cases">
+      <option name="closed" value="true" />
+      <created>1707276646968</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1707276646968</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -183,27 +195,7 @@
     <MESSAGE value="Mostly finished lexer" />
     <MESSAGE value="Passing all except char test and example" />
     <MESSAGE value="Passing all except char test" />
-    <option name="LAST_COMMIT_MESSAGE" value="Passing all except char test" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/plc/project/Lexer.java</url>
-          <line>77</line>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/plc/project/Lexer.java</url>
-          <line>56</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/test/java/plc/project/ParserExpressionTests.java</url>
-          <line>20</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Passing all given test cases" />
+    <option name="LAST_COMMIT_MESSAGE" value="Passing all given test cases" />
   </component>
 </project>

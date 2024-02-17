@@ -2,13 +2,6 @@ package plc.project;
 
 import java.util.List;
 
-import java.util.ArrayList;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Optional;
-
-
-
 /**
  * The parser takes the sequence of tokens emitted by the lexer and turns that
  * into a structured representation of the program, called the Abstract Syntax
@@ -34,30 +27,7 @@ public final class Parser {
      * Parses the {@code source} rule.
      */
     public Ast.Source parseSource() throws ParseException {
-        //throw new UnsupportedOperationException(); //TODO
-        List<Ast.Global> globalDeclarations = new ArrayList<>();
-        List<Ast.Function> functions = new ArrayList<>();
-
-        try {
-            while (peek("LIST", "VAL", "VAR", "FUN")) {
-                if (peek("LIST")) {
-                    globalDeclarations.add(parseList());
-                } else if (peek("VAR")) {
-                    globalDeclarations.add(parseMutable());
-                } else if (peek("VAL")) {
-                    globalDeclarations.add(parseImmutable());
-                } else if (peek("FUN")) {
-                    functions.add(parseFunction());
-                }
-
-                match(';'); // Consume the semicolon after each global declaration or function definition
-            }
-        } catch (ParseException e) {
-            // Handle or rethrow the exception, possibly with more context information
-            throw new ParseException("Error while parsing source.", e.getIndex());
-        }
-
-        return new Ast.Source(globalDeclarations, functions);
+        throw new UnsupportedOperationException(); //TODO
     }
 
     /**
@@ -66,7 +36,6 @@ public final class Parser {
      */
     public Ast.Global parseGlobal() throws ParseException {
         throw new UnsupportedOperationException(); //TODO
-
     }
 
     /**
@@ -75,8 +44,6 @@ public final class Parser {
      */
     public Ast.Global parseList() throws ParseException {
         throw new UnsupportedOperationException(); //TODO
-
-
     }
 
     /**
@@ -85,7 +52,6 @@ public final class Parser {
      */
     public Ast.Global parseMutable() throws ParseException {
         throw new UnsupportedOperationException(); //TODO
-
     }
 
     /**
@@ -94,7 +60,6 @@ public final class Parser {
      */
     public Ast.Global parseImmutable() throws ParseException {
         throw new UnsupportedOperationException(); //TODO
-
     }
 
     /**
@@ -119,8 +84,7 @@ public final class Parser {
      * statement, then it is an expression/assignment statement.
      */
     public Ast.Statement parseStatement() throws ParseException {
-        //throw new UnsupportedOperationException(); //TODO
-
+        throw new UnsupportedOperationException(); //TODO
     }
 
     /**
@@ -151,8 +115,8 @@ public final class Parser {
     }
 
     /**
-     * Parses a case or default statement block from the {@code switch} rule.
-     * This method should only be called if the next tokens start the case or
+     * Parses a case or default statement block from the {@code switch} rule. 
+     * This method should only be called if the next tokens start the case or 
      * default block of a switch statement, aka {@code CASE} or {@code DEFAULT}.
      */
     public Ast.Statement.Case parseCaseStatement() throws ParseException {
@@ -166,7 +130,6 @@ public final class Parser {
      */
     public Ast.Statement.While parseWhileStatement() throws ParseException {
         throw new UnsupportedOperationException(); //TODO
-
     }
 
     /**
@@ -176,7 +139,6 @@ public final class Parser {
      */
     public Ast.Statement.Return parseReturnStatement() throws ParseException {
         throw new UnsupportedOperationException(); //TODO
-
     }
 
     /**
@@ -190,46 +152,14 @@ public final class Parser {
      * Parses the {@code logical-expression} rule.
      */
     public Ast.Expression parseLogicalExpression() throws ParseException {
-        //throw new UnsupportedOperationException(); //TODO
-        try {
-
-            Ast.Expression output = parseComparisonExpression();
-
-            while (match("AND") || match("OR")) { // right
-
-                String operation = tokens.get(-1).getLiteral();
-                Ast.Expression rightExpr = parseComparisonExpression();
-                output = new Ast.Expression().Binary(operation, output, rightExpr);
-
-            }
-            return output;
-
-        } catch(ParseException p) {
-            throw new ParseException(p.getMessage(), p.getIndex());
-        }
+        throw new UnsupportedOperationException(); //TODO
     }
 
     /**
      * Parses the {@code comparison-expression} rule.
      */
     public Ast.Expression parseComparisonExpression() throws ParseException {
-        //throw new UnsupportedOperationException(); //TODO
-        try {
-            Ast.Expression output = parseAdditiveExpression();
-            while (match("!=")
-                    || match("==")
-                    || match(">=")
-                    || match(">")
-                    || match("<=")
-                    || match("<")) {
-                String operation = tokens.get(-1).getLiteral();
-                Ast.Expression rightExpr = parseComparisonExpression();
-                output = new Ast.Expression().Binary(operation, output, rightExpr);
-            }
-            return output;
-        } catch(ParseException p) {
-            throw new ParseException(p.getMessage(), p.getIndex());
-        }
+        throw new UnsupportedOperationException(); //TODO
     }
 
     /**
@@ -267,8 +197,22 @@ public final class Parser {
      * {@code peek(Token.Type.IDENTIFIER)} and {@code peek("literal")}.
      */
     private boolean peek(Object... patterns) {
-        throw new UnsupportedOperationException(); //TODO (in lecture)
-
+        for(int i = 0; i < patterns.length; i++){
+            if(!tokens.has(i)){
+                return false;
+            } else if (patterns[i] instanceof Token.Type){
+                if(patterns[i] != tokens .get(i).getType()){
+                    return false;
+                }
+            } else if (patterns[i] instanceof String) {
+                if(!patterns[i].equals(tokens.get(i).getLiteral())){
+                    return false;
+                }
+            } else {
+                throw new AssertionError("Invalid pattern object: " + patterns[i].getClass());
+            }
+        }
+        return true;
     }
 
     /**
@@ -276,7 +220,14 @@ public final class Parser {
      * and advances the token stream.
      */
     private boolean match(Object... patterns) {
-        throw new UnsupportedOperationException(); //TODO (in lecture)
+        boolean peek = peek(patterns);
+
+        if(peek){
+            for (int i = 0; i < patterns.length; i++){
+                tokens.advance();
+            }
+        }
+        return peek;
     }
 
     private static final class TokenStream {
