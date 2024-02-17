@@ -141,6 +141,7 @@ public final class Lexer {
                 match("\\\\");
             }
             throw new ParseException("Unterminated String", chars.index);
+
         }
         return chars.emit(Token.Type.STRING);
     }
