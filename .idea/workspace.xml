@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="Passing all given test cases and extras">
+    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="Peek and Match">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/plc/project/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/plc/project/Parser.java" afterDir="false" />
     </list>
@@ -21,6 +21,20 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "VallinEMCSQ"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="b18edd99-d5cb-492e-a5a3-2273c25ab29f" />
+        <option name="url" value="https://github.com/VallinEMCSQ/PLC_Project.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -30,31 +44,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Build PLC_Project.executor": "Run",
-    "JUnit.LexerTests.executor": "Run",
-    "JUnit.LexerTests.testCharacter.executor": "Run",
-    "JUnit.LexerTests.testExamples.executor": "Run",
-    "JUnit.LexerTests.testException.executor": "Run",
-    "JUnit.ParserExpressionTests.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Build PLC_Project.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.LexerTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.LexerTests.testCharacter.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.LexerTests.testExamples.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.LexerTests.testException.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ParserExpressionTests.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\valca\OneDrive\Documents\UF School\Spring 2024\CIS4020\IntelliJ Projects\PLC_Project\src\test\java\plc\project" />
@@ -152,6 +166,7 @@
       <workItem from="1706724957699" duration="4125000" />
       <workItem from="1706734014352" duration="3050000" />
       <workItem from="1707161916713" duration="24405000" />
+      <workItem from="1708193687641" duration="12229000" />
     </task>
     <task id="LOCAL-00001" summary="Mostly finished lexer">
       <option name="closed" value="true" />
@@ -185,7 +200,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707276646968</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Peek and Match">
+      <option name="closed" value="true" />
+      <created>1708193809925</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1708193809925</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -196,6 +219,7 @@
     <MESSAGE value="Passing all except char test and example" />
     <MESSAGE value="Passing all except char test" />
     <MESSAGE value="Passing all given test cases" />
-    <option name="LAST_COMMIT_MESSAGE" value="Passing all given test cases" />
+    <MESSAGE value="Peek and Match" />
+    <option name="LAST_COMMIT_MESSAGE" value="Peek and Match" />
   </component>
 </project>
