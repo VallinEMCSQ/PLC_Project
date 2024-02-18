@@ -278,7 +278,8 @@ public final class Parser {
                 return output;
             }
             else{
-                throw new ParseException("Expected closing parenthesis", tokens.index);
+                int exceptionIndex = tokens.get(-1).getIndex() + tokens.get(-1).getLiteral().length();
+                throw new ParseException("Expected closing parenthesis", exceptionIndex);
             }
         } else if (peek(Token.Type.IDENTIFIER)) {
             String id = tokens.get(0).getLiteral();
