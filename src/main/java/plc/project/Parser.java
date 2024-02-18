@@ -278,7 +278,7 @@ public final class Parser {
                 return output;
             }
             else{
-                throw new ParseException("Invalid Primary Expression", tokens.index);
+                throw new ParseException("Expected closing parenthesis", tokens.index);
             }
         } else if (peek(Token.Type.IDENTIFIER)) {
             String id = tokens.get(0).getLiteral();
@@ -286,22 +286,30 @@ public final class Parser {
             if(peek("(")){
                 match("(");
                 List<Ast.Expression> expressions = new ArrayList<Ast.Expression>();
-                while(!peek(")")){
+                if(!peek(")")){
                     do {
                         expressions.add(parseExpression());
                     }
                     while (match(","));
                 }
-                Ast.Expression output = new Ast.Expression.Function(id, expressions);
-                return output;
+                if(peek(")")){
+                    Ast.Expression output = new Ast.Expression.Function(id, expressions);
+                    return output;
+                }
+                else{
+                    throw new ParseException("Expected closing parenthesis", tokens.index);
+                }
             } else if (peek("[")) {
                 match("[");
-                Ast.Expression output = parseExpression();
+                Ast.Expression output = null;
+                if(!peek("]")){
+                    output = parseExpression();
+                }
                 if(peek("]")){
                     return new Ast.Expression.Access(Optional.of(output), id);
                 }
                 else{
-                    throw new ParseException("Invalid Access Expression", tokens.index);
+                    throw new ParseException("Expected closing bracket", tokens.index);
                 }
             } else {
                 Ast.Expression output = new Ast.Expression.Access(Optional.empty(), id);
