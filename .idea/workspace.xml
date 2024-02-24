@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="Parser base test cases working">
-      <change beforePath="$PROJECT_DIR$/src/test/java/plc/project/ParserExpressionTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/plc/project/ParserExpressionTests.java" afterDir="false" />
+    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="Parse Exception fixed">
+      <change afterPath="$PROJECT_DIR$/src/test/java/plc/project/ParserTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/plc/project/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/plc/project/Parser.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,12 +22,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "VallinEMCSQ"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;VallinEMCSQ&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
@@ -43,39 +45,42 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Build PLC_Project.executor": "Run",
-    "JUnit.LexerTests.executor": "Run",
-    "JUnit.LexerTests.testCharacter.executor": "Run",
-    "JUnit.LexerTests.testExamples.executor": "Run",
-    "JUnit.LexerTests.testException.executor": "Run",
-    "JUnit.ParserExpressionTests.executor": "Run",
-    "JUnit.ParserExpressionTests.testExpressionStatement.executor": "Debug",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Build PLC_Project.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.LexerTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.LexerTests.testCharacter.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.LexerTests.testExamples.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.LexerTests.testException.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ParserExpressionTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ParserExpressionTests.testExpressionStatement.executor&quot;: &quot;Debug&quot;,
+    &quot;JUnit.ParserExpressionTests.testFunctionExpression.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ParserExpressionTests.testScenarioParseException.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ParserTests.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\valca\OneDrive\Documents\UF School\Spring 2024\CIS4020\IntelliJ Projects\PLC_Project\src\test\java\plc\project" />
       <recent name="C:\Users\valca\OneDrive\Documents\UF School\Spring 2024\CIS4020\IntelliJ Projects\PLC_Project\src\main\java\plc\project" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="JUnit.LexerTests">
     <configuration name="LexerTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PLC_Project.test" />
       <extension name="coverage">
@@ -87,38 +92,6 @@
       <option name="PACKAGE_NAME" value="plc.project" />
       <option name="MAIN_CLASS_NAME" value="plc.project.LexerTests" />
       <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="LexerTests.testCharacter" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="PLC_Project.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="plc.project.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.LexerTests" />
-      <option name="METHOD_NAME" value="testCharacter(java.lang.String,java.lang.String,boolean)" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="LexerTests.testExamples" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="PLC_Project.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="plc.project.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.LexerTests" />
-      <option name="METHOD_NAME" value="testExamples(java.lang.String,java.lang.String,java.util.List)" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -155,13 +128,45 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ParserExpressionTests.testFunctionExpression" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PLC_Project.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="plc.project.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="plc.project" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.ParserExpressionTests" />
+      <option name="METHOD_NAME" value="testFunctionExpression(java.lang.String,java.util.List,plc.project.Ast$Expression$Function)" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ParserExpressionTests.testScenarioParseException" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PLC_Project.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="plc.project.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="plc.project" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.ParserExpressionTests" />
+      <option name="METHOD_NAME" value="testScenarioParseException(java.lang.String,java.util.List,plc.project.ParseException)" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.ParserExpressionTests.testExpressionStatement" />
         <item itemvalue="JUnit.LexerTests" />
+        <item itemvalue="JUnit.ParserExpressionTests.testScenarioParseException" />
+        <item itemvalue="JUnit.ParserExpressionTests.testFunctionExpression" />
+        <item itemvalue="JUnit.ParserExpressionTests.testExpressionStatement" />
         <item itemvalue="JUnit.LexerTests.testException" />
-        <item itemvalue="JUnit.LexerTests.testCharacter" />
-        <item itemvalue="JUnit.LexerTests.testExamples" />
       </list>
     </recent_temporary>
   </component>
@@ -183,7 +188,9 @@
       <workItem from="1706724957699" duration="4125000" />
       <workItem from="1706734014352" duration="3050000" />
       <workItem from="1707161916713" duration="24405000" />
-      <workItem from="1708193687641" duration="22983000" />
+      <workItem from="1708193687641" duration="25436000" />
+      <workItem from="1708366414541" duration="17775000" />
+      <workItem from="1708740123107" duration="9933000" />
     </task>
     <task id="LOCAL-00001" summary="Mostly finished lexer">
       <option name="closed" value="true" />
@@ -233,7 +240,23 @@
       <option name="project" value="LOCAL" />
       <updated>1708228499030</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Parse Exception fixed">
+      <option name="closed" value="true" />
+      <created>1708231766933</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1708231766933</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Parse Exception fixed">
+      <option name="closed" value="true" />
+      <created>1708232039212</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1708232039212</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -246,17 +269,7 @@
     <MESSAGE value="Passing all given test cases" />
     <MESSAGE value="Peek and Match" />
     <MESSAGE value="Parser base test cases working" />
-    <option name="LAST_COMMIT_MESSAGE" value="Parser base test cases working" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/plc/project/Parser.java</url>
-          <line>168</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Parse Exception fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Parse Exception fixed" />
   </component>
 </project>

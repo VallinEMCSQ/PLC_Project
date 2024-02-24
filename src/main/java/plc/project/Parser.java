@@ -1,5 +1,6 @@
 package plc.project;
 
+import javax.swing.text.html.HTMLDocument;
 import java.util.List;
 
 import java.util.ArrayList;
@@ -32,7 +33,15 @@ public final class Parser {
      * Parses the {@code source} rule.
      */
     public Ast.Source parseSource() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        List<Ast.Global> globalList = new ArrayList<Ast.Global>();
+        List<Ast.Function> functionList = new ArrayList<Ast.Function>();
+        while (peek("LIST") || peek("VAR") || peek("VAL")){
+            globalList.add(parseGlobal());
+        }
+        while (peek("FUN")){
+            functionList.add(parseFunction());
+        }
+        return new Ast.Source(globalList, functionList);
     }
 
     /**
@@ -40,7 +49,18 @@ public final class Parser {
      * next tokens start a global, aka {@code LIST|VAL|VAR}.
      */
     public Ast.Global parseGlobal() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        if(peek("LIST")){
+            match("LIST");
+            return parseList();
+        } else if (peek("VAR")) {
+            match("VAR");
+            return parseMutable();
+        } else if (peek("VAL")) {
+            match("VAL");
+            return parseImmutable();
+        } else {
+            throw new ParseException("Invalid Global", tokens.index);
+        }
     }
 
     /**
@@ -48,7 +68,24 @@ public final class Parser {
      * next token declares a list, aka {@code LIST}.
      */
     public Ast.Global parseList() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        if(peek(Token.Type.IDENTIFIER)){
+            String identifier = tokens.get(0).getLiteral();
+            match(identifier);
+            Optional<Ast.Expression> value;
+
+            if(match("=")){
+                if(match("[")){
+                    value = Optional.of(parseExpression());
+                    while(peek(",")){
+                        value = Optional.of(parseExpression());
+                    }
+                    if(match("]")){
+                        return new Ast.Global(identifier, true, value);
+                    }
+                }
+            }
+        }
+        throw new ParseException("Invalid List", tokens.index);
     }
 
     /**
@@ -56,7 +93,17 @@ public final class Parser {
      * next token declares a mutable global variable, aka {@code VAR}.
      */
     public Ast.Global parseMutable() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        if (peek(Token.Type.IDENTIFIER)){
+            String identifier = tokens.get(0).getLiteral();
+            match(identifier);
+            if(match("=")){
+                return new Ast.Global(identifier, true, Optional.of(parseExpression()));
+            }
+            else{
+                return new Ast.Global(identifier, true, Optional.empty());
+            }
+        }
+        throw new ParseException("Invalid Mutable", tokens.index);
     }
 
     /**
@@ -64,7 +111,14 @@ public final class Parser {
      * next token declares an immutable global variable, aka {@code VAL}.
      */
     public Ast.Global parseImmutable() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        if(peek(Token.Type.IDENTIFIER)){
+            String identifier = tokens.get(0).getLiteral();
+            match(identifier);
+            if(match("=")){
+                return new Ast.Global(identifier, false, Optional.of(parseExpression()));
+            }
+        }
+        throw new ParseException("Invalid Immutable", tokens.index);
     }
 
     /**
@@ -72,9 +126,41 @@ public final class Parser {
      * next tokens start a method, aka {@code FUN}.
      */
     public Ast.Function parseFunction() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
-    }
+        match("FUN");
+        String identifier;
+        List<String> parameters = new ArrayList<String>();
+        List<Ast.Statement> statements = new ArrayList<Ast.Statement>();
+        Ast.Function function;
 
+        if(peek(Token.Type.IDENTIFIER)){
+            identifier = tokens.get(0).getLiteral();
+            match(identifier);
+            if(match("(")){
+                if (peek(Token.Type.IDENTIFIER)){
+                    do {
+                        parameters.add(tokens.get(0).getLiteral());
+                        match(Token.Type.IDENTIFIER);
+                    }
+                    while (match(","));
+                }
+                if (!peek(")")) {
+                    throw new ParseException("Invalid Function", tokens.index);
+                }
+                if(match("DO")){
+                    statements = parseBlock();
+                    if(match("END")){
+                        return new Ast.Function(identifier, parameters, statements);
+                    }
+                }
+                else {
+                    throw new ParseException("Expected DO", tokens.index);
+                }
+            }
+        } else {
+            throw new ParseException("Invalid Function", tokens.index);
+        }
+        throw new ParseException("Invalid Function", tokens.index);
+    }
     /**
      * Parses the {@code block} rule. This method should only be called if the
      * preceding token indicates the opening a block of statements.
@@ -89,10 +175,18 @@ public final class Parser {
      * statement, then it is an expression/assignment statement.
      */
     public Ast.Statement parseStatement() throws ParseException {
-        if (false){
-
-        }
-        else{
+        Ast.Statement statement;
+        if (peek("LET")){
+            statement = parseDeclarationStatement();
+        } else if (peek("RETURN")) {
+            statement = parseReturnStatement();
+        } else if (peek("SWITCH")) {
+            statement = parseSwitchStatement();
+        } else if (peek("WHILE")) {
+            statement = parseWhileStatement();
+        } else if (peek("IF")) {
+            statement = parseIfStatement();
+        } else{
             Ast.Expression left = parseExpression();
             if(peek("=")){
                 match("=");
@@ -114,7 +208,21 @@ public final class Parser {
      * statement, aka {@code LET}.
      */
     public Ast.Statement.Declaration parseDeclarationStatement() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        if (!match("LET")){
+            throw new ParseException("Expected LET", tokens.index);
+        }
+        if (!match(Token.Type.IDENTIFIER)){
+            throw new ParseException("Expected Identifier", tokens.index);
+        }
+        String name = tokens.get(0).getLiteral();
+        Optional<Ast.Expression> value = Optional.empty();
+        if (match("=")){
+            value = Optional.of(parseExpression());
+        }
+        if (!match(";")){
+            throw new ParseException("Expected Semicolon", tokens.index);
+        }
+        return new Ast.Statement.Declaration(name, value);
     }
 
     /**
@@ -123,7 +231,24 @@ public final class Parser {
      * {@code IF}.
      */
     public Ast.Statement.If parseIfStatement() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        Ast.Expression condition;
+        List<Ast.Statement> thenStatements = new ArrayList<Ast.Statement>();
+        List<Ast.Statement> elseStatements = new ArrayList<Ast.Statement>();
+        if (match("IF")){
+            condition = parseExpression();
+            if (match("DO")){
+                while (!match("ELSE") && !match("END")){
+                    thenStatements.add(parseStatement());
+                }
+                if (tokens.get(-1).getLiteral().equals("ELSE")){
+                    while (!match("END")){
+                        elseStatements.add(parseStatement());
+                    }
+                    return new Ast.Statement.If(condition, thenStatements, elseStatements);
+                }
+            }
+        }
+       throw new ParseException("Invalid IF Statement", tokens.index);
     }
 
     /**
@@ -132,7 +257,15 @@ public final class Parser {
      * {@code SWITCH}.
      */
     public Ast.Statement.Switch parseSwitchStatement() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        if (match("SWITCH")){
+            Ast.Expression condition = parseExpression();
+            List<Ast.Statement.Case> cases = new ArrayList<Ast.Statement.Case>();
+            while (peek("CASE") || peek("DEFAULT")){
+                cases.add(parseCaseStatement());
+            }
+            return new Ast.Statement.Switch(condition, cases);
+        }
+        throw new ParseException("Invalid Switch Statement", tokens.index);
     }
 
     /**
@@ -141,7 +274,26 @@ public final class Parser {
      * default block of a switch statement, aka {@code CASE} or {@code DEFAULT}.
      */
     public Ast.Statement.Case parseCaseStatement() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        Ast.Statement.Case caseStatement = null;
+        if (peek("CASE")){
+            Ast.Expression value = parseExpression();
+            if (match(":")){
+                List<Ast.Statement> statements = new ArrayList<Ast.Statement>();
+                while (!peek("CASE") && !peek("DEFAULT")){
+                    statements.add(parseStatement());
+                }
+                caseStatement = new Ast.Statement.Case(Optional.of(value), statements);
+            }
+        } else if (match("DEFAULT")) {
+            List<Ast.Statement> statements = new ArrayList<Ast.Statement>();
+            while (!match("END")){
+                statements.add(parseStatement());
+            }
+            caseStatement = new Ast.Statement.Case(Optional.empty(), statements);
+        } else {
+            throw new ParseException("Invalid Case Statement", tokens.index);
+        }
+        return caseStatement;
     }
 
     /**
@@ -150,7 +302,17 @@ public final class Parser {
      * {@code WHILE}.
      */
     public Ast.Statement.While parseWhileStatement() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        if(match("WHILE")){
+            Ast.Expression condition = parseExpression();
+            if(match("DO")){
+                List<Ast.Statement> statements = new ArrayList<Ast.Statement>();
+                while (!match("END")){
+                    statements.add(parseStatement());
+                }
+                return new Ast.Statement.While(condition, statements);
+            }
+        }
+        throw new ParseException("Invalid While Statement", tokens.index);
     }
 
     /**
@@ -159,7 +321,13 @@ public final class Parser {
      * {@code RETURN}.
      */
     public Ast.Statement.Return parseReturnStatement() throws ParseException {
-        throw new UnsupportedOperationException(); //TODO
+        if(match("RETURN")){
+            Ast.Expression value = parseExpression();
+            if (match(";")){
+                return new Ast.Statement.Return(value);
+            }
+        }
+        throw new ParseException("Invalid Return", tokens.index);
     }
 
     /**
