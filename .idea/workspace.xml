@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="Parse Exception fixed">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/plc/project/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/plc/project/Parser.java" afterDir="false" />
-    </list>
+    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="Parse Exception fixed" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -112,22 +108,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ParserExpressionTests.testScenarioParseException" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="PLC_Project.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="plc.project.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.ParserExpressionTests" />
-      <option name="METHOD_NAME" value="testScenarioParseException(java.lang.String,java.util.List,plc.project.ParseException)" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="ParserTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PLC_Project.test" />
       <extension name="coverage">
@@ -159,13 +139,29 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ParserTests.testSource" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PLC_Project.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="plc.project.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="plc.project" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.ParserTests" />
+      <option name="METHOD_NAME" value="testSource(java.lang.String,java.util.List,plc.project.Ast$Source)" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="JUnit.ParserTests" />
+        <item itemvalue="JUnit.ParserTests.testSource" />
         <item itemvalue="JUnit.ParserTests.testReturnStatement" />
         <item itemvalue="JUnit.ParserExpressionTests" />
         <item itemvalue="JUnit.LexerTests" />
-        <item itemvalue="JUnit.ParserExpressionTests.testScenarioParseException" />
       </list>
     </recent_temporary>
   </component>
@@ -190,7 +186,7 @@
       <workItem from="1708193687641" duration="25436000" />
       <workItem from="1708366414541" duration="17775000" />
       <workItem from="1708740123107" duration="9933000" />
-      <workItem from="1708814402803" duration="8526000" />
+      <workItem from="1708814402803" duration="8827000" />
     </task>
     <task id="LOCAL-00001" summary="Mostly finished lexer">
       <option name="closed" value="true" />

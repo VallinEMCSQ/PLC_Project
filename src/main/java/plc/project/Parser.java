@@ -213,20 +213,25 @@ public final class Parser {
      * statement, aka {@code LET}.
      */
     public Ast.Statement.Declaration parseDeclarationStatement() throws ParseException {
-        if (!match("LET")){
-            throw new ParseException("Expected LET", tokens.index);
+        match("LET");
+
+        if (!peek(Token.Type.IDENTIFIER)) {
+            throw new ParseException("Expected identifier after LET", tokens.index);
         }
-        if (!match(Token.Type.IDENTIFIER)){
-            throw new ParseException("Expected Identifier", tokens.index);
-        }
+
         String name = tokens.get(0).getLiteral();
+        match(Token.Type.IDENTIFIER);
+
         Optional<Ast.Expression> value = Optional.empty();
-        if (match("=")){
+
+        if (match("=")) {
             value = Optional.of(parseExpression());
         }
-        if (!match(";")){
-            throw new ParseException("Expected Semicolon", tokens.index);
+
+        if (!match(";")) {
+            throw new ParseException("Expected semicolon", tokens.index);
         }
+
         return new Ast.Statement.Declaration(name, value);
     }
 
