@@ -49,18 +49,21 @@ public final class Parser {
      * next tokens start a global, aka {@code LIST|VAL|VAR}.
      */
     public Ast.Global parseGlobal() throws ParseException {
+        Ast.Global global = null;
         if(peek("LIST")){
             match("LIST");
-            return parseList();
+            global = parseList();
         } else if (peek("VAR")) {
             match("VAR");
-            return parseMutable();
+            global = parseMutable();
         } else if (peek("VAL")) {
             match("VAL");
-            return parseImmutable();
+            global = parseImmutable();
         } else {
             throw new ParseException("Invalid Global", tokens.index);
         }
+        match(";");
+        return global;
     }
 
     /**

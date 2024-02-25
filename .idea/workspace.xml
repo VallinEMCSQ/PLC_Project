@@ -56,6 +56,7 @@
     "JUnit.ParserExpressionTests.testFunctionExpression.executor": "Run",
     "JUnit.ParserExpressionTests.testScenarioParseException.executor": "Run",
     "JUnit.ParserTests.executor": "Run",
+    "JUnit.ParserTests.testExample1.executor": "Run",
     "JUnit.ParserTests.testReturnStatement.executor": "Run",
     "JUnit.ParserTests.testSource.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
@@ -81,22 +82,7 @@
       <recent name="C:\Users\valca\OneDrive\Documents\UF School\Spring 2024\CIS4020\IntelliJ Projects\PLC_Project\src\main\java\plc\project" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.ParserTests">
-    <configuration name="LexerTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="PLC_Project.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="plc.project.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.LexerTests" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.ParserTests.testExample1">
     <configuration name="ParserExpressionTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PLC_Project.test" />
       <extension name="coverage">
@@ -123,6 +109,22 @@
       <option name="PACKAGE_NAME" value="plc.project" />
       <option name="MAIN_CLASS_NAME" value="plc.project.ParserTests" />
       <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ParserTests.testExample1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PLC_Project.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="plc.project.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="plc.project" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.ParserTests" />
+      <option name="METHOD_NAME" value="testExample1" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -161,11 +163,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.ParserTests.testExample1" />
         <item itemvalue="JUnit.ParserTests" />
         <item itemvalue="JUnit.ParserTests.testSource" />
         <item itemvalue="JUnit.ParserTests.testReturnStatement" />
         <item itemvalue="JUnit.ParserExpressionTests" />
-        <item itemvalue="JUnit.LexerTests" />
       </list>
     </recent_temporary>
   </component>
@@ -271,5 +273,16 @@
     <MESSAGE value="Parser base test cases working" />
     <MESSAGE value="Parse Exception fixed" />
     <option name="LAST_COMMIT_MESSAGE" value="Parse Exception fixed" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/plc/project/Parser.java</url>
+          <line>38</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
