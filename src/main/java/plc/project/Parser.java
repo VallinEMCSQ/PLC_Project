@@ -176,7 +176,8 @@ public final class Parser {
      */
     public Ast.Statement parseStatement() throws ParseException {
         Ast.Statement statement;
-        if (peek("LET")){
+
+        if (peek("LET")) {
             statement = parseDeclarationStatement();
         } else if (peek("RETURN")) {
             statement = parseReturnStatement();
@@ -186,20 +187,24 @@ public final class Parser {
             statement = parseWhileStatement();
         } else if (peek("IF")) {
             statement = parseIfStatement();
-        } else{
+        } else {
             Ast.Expression left = parseExpression();
-            if(peek("=")){
-                match("=");
+
+            if (match("=")) {
                 Ast.Expression right = parseExpression();
-                if(peek(";")){
-                    match(";");
-                    Ast.Statement output = new Ast.Statement.Assignment(left, right);
-                    return output;
+                if (match(";")) {
+                    statement = new Ast.Statement.Assignment(left, right);
+                } else {
+                    throw new ParseException("Expected semicolon", tokens.index);
                 }
+            } else if (match(";")) {
+                statement = new Ast.Statement.Expression(left);
+            } else {
+                throw new ParseException("Expected semicolon", tokens.index);
             }
-            return new Ast.Statement.Expression(left);
         }
-        throw new ParseException("Invalid Statement", tokens.index);
+
+        return statement;
     }
 
     /**
@@ -231,24 +236,31 @@ public final class Parser {
      * {@code IF}.
      */
     public Ast.Statement.If parseIfStatement() throws ParseException {
-        Ast.Expression condition;
+        match("IF");
+
+        Ast.Expression condition = parseExpression();
         List<Ast.Statement> thenStatements = new ArrayList<Ast.Statement>();
         List<Ast.Statement> elseStatements = new ArrayList<Ast.Statement>();
-        if (match("IF")){
-            condition = parseExpression();
-            if (match("DO")){
-                while (!match("ELSE") && !match("END")){
-                    thenStatements.add(parseStatement());
-                }
-                if (tokens.get(-1).getLiteral().equals("ELSE")){
-                    while (!match("END")){
-                        elseStatements.add(parseStatement());
-                    }
-                    return new Ast.Statement.If(condition, thenStatements, elseStatements);
+
+        if (match("DO")) {
+            while (!peek("ELSE") && !peek("END")) {
+                thenStatements.add(parseStatement());
+            }
+
+            if (match("ELSE")) {
+                while (!peek("END")) {
+                    elseStatements.add(parseStatement());
                 }
             }
+
+            if (match("END")) {
+                return new Ast.Statement.If(condition, thenStatements, elseStatements);
+            } else {
+                throw new ParseException("Expected END", tokens.index);
+            }
+        } else {
+            throw new ParseException("Expected DO", tokens.index);
         }
-       throw new ParseException("Invalid IF Statement", tokens.index);
     }
 
     /**
@@ -328,6 +340,7 @@ public final class Parser {
             }
         }
         throw new ParseException("Invalid Return", tokens.index);
+
     }
 
     /**
@@ -400,7 +413,7 @@ public final class Parser {
      * not strictly necessary.
      */
     public Ast.Expression parsePrimaryExpression() throws ParseException {
-        if(peek("NIL")){
+        if (peek("NIL")) {
             Ast.Expression output = new Ast.Expression.Literal(null);
             match("NIL");
             return output;
@@ -429,6 +442,7 @@ public final class Parser {
             match(Token.Type.CHARACTER);
             return output;
         } else if (peek(Token.Type.STRING)) {
+
             String newString = tokens.get(0).getLiteral();
             newString = newString.replace("\"", "");
             newString = newString.replace("\\\\", "\\");
@@ -437,49 +451,42 @@ public final class Parser {
             newString = newString.replace("\\r", "\r");
             newString = newString.replace("\\t", "\t");
             Ast.Expression output = new Ast.Expression.Literal(newString);
-            match(Token.Type.CHARACTER);
+            match(Token.Type.STRING);
             return output;
         } else if (peek("(")) {
             match("(");
             Ast.Expression output = new Ast.Expression.Group(parseExpression());
-            if(peek(")")){
+            if (peek(")")) {
                 return output;
-            }
-            else{
+            } else {
                 int exceptionIndex = tokens.get(-1).getIndex() + tokens.get(-1).getLiteral().length();
                 throw new ParseException("Expected closing parenthesis", exceptionIndex);
             }
         } else if (peek(Token.Type.IDENTIFIER)) {
             String id = tokens.get(0).getLiteral();
             match(id);
-            if(peek("(")){
+            if (peek("(")) {
                 match("(");
                 List<Ast.Expression> expressions = new ArrayList<Ast.Expression>();
-                if(!peek(")")){
+                if (!peek(")")) {
                     do {
                         expressions.add(parseExpression());
-                    }
-                    while (match(","));
+                    } while (match(","));
                 }
-                if(peek(")")){
+                if (peek(")")) {
                     Ast.Expression output = new Ast.Expression.Function(id, expressions);
                     return output;
-                }
-                else{
+                } else {
                     throw new ParseException("Expected closing parenthesis", tokens.index);
                 }
             } else if (peek("[")) {
                 match("[");
                 Ast.Expression output = null;
-                if(!peek("]")){
+                if (!peek("]")) {
                     output = parseExpression();
                 }
-                if(peek("]")){
-                    return new Ast.Expression.Access(Optional.of(output), id);
-                }
-                else{
-                    throw new ParseException("Expected closing bracket", tokens.index);
-                }
+                match("]");  // Add this line
+                return new Ast.Expression.Access(Optional.of(output), id);
             } else {
                 Ast.Expression output = new Ast.Expression.Access(Optional.empty(), id);
                 return output;
@@ -487,6 +494,7 @@ public final class Parser {
         }
         throw new ParseException("Nothing Matched", tokens.index);
     }
+
 
     /**
      * As in the lexer, returns {@code true} if the current sequence of tokens
