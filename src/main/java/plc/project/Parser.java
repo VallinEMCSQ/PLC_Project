@@ -127,38 +127,41 @@ public final class Parser {
      */
     public Ast.Function parseFunction() throws ParseException {
         match("FUN");
-        String identifier;
-        List<String> parameters = new ArrayList<String>();
-        List<Ast.Statement> statements = new ArrayList<Ast.Statement>();
-        Ast.Function function;
 
-        if(peek(Token.Type.IDENTIFIER)){
+        String identifier;
+        List<String> parameters = new ArrayList<>();
+        List<Ast.Statement> statements = new ArrayList<>();
+
+        if (peek(Token.Type.IDENTIFIER)) {
             identifier = tokens.get(0).getLiteral();
             match(identifier);
-            if(match("(")){
-                if (peek(Token.Type.IDENTIFIER)){
+
+            if (match("(")) {
+                if (peek(Token.Type.IDENTIFIER)) {
                     do {
                         parameters.add(tokens.get(0).getLiteral());
                         match(Token.Type.IDENTIFIER);
-                    }
-                    while (match(","));
+                    } while (match(","));
                 }
-                if (!peek(")")) {
+
+                if (!match(")")) {
                     throw new ParseException("Invalid Function", tokens.index);
                 }
-                if(match("DO")){
-                    statements = parseBlock();
-                    if(match("END")){
-                        return new Ast.Function(identifier, parameters, statements);
-                    }
+
+                match("DO");
+
+                while (!peek("END")) {
+                    statements.add(parseStatement());
                 }
-                else {
-                    throw new ParseException("Expected DO", tokens.index);
+
+                if (match("END")) {
+                    return new Ast.Function(identifier, parameters, statements);
+                } else {
+                    throw new ParseException("Expected END", tokens.index);
                 }
             }
-        } else {
-            throw new ParseException("Invalid Function", tokens.index);
         }
+
         throw new ParseException("Invalid Function", tokens.index);
     }
     /**
@@ -447,7 +450,6 @@ public final class Parser {
             match(Token.Type.CHARACTER);
             return output;
         } else if (peek(Token.Type.STRING)) {
-
             String newString = tokens.get(0).getLiteral();
             newString = newString.replace("\"", "");
             newString = newString.replace("\\\\", "\\");
@@ -461,43 +463,47 @@ public final class Parser {
         } else if (peek("(")) {
             match("(");
             Ast.Expression output = new Ast.Expression.Group(parseExpression());
-            if (peek(")")) {
+            if (match(")")) {
                 return output;
             } else {
-                int exceptionIndex = tokens.get(-1).getIndex() + tokens.get(-1).getLiteral().length();
-                throw new ParseException("Expected closing parenthesis", exceptionIndex);
+                throw new ParseException("Expected closing parenthesis", tokens.index);
             }
         } else if (peek(Token.Type.IDENTIFIER)) {
             String id = tokens.get(0).getLiteral();
             match(id);
+
             if (peek("(")) {
                 match("(");
-                List<Ast.Expression> expressions = new ArrayList<Ast.Expression>();
+                List<Ast.Expression> expressions = new ArrayList<>();
+
                 if (!peek(")")) {
                     do {
                         expressions.add(parseExpression());
                     } while (match(","));
                 }
-                if (peek(")")) {
-                    Ast.Expression output = new Ast.Expression.Function(id, expressions);
-                    return output;
+
+                if (match(")")) {
+                    return new Ast.Expression.Function(id, expressions);
                 } else {
                     throw new ParseException("Expected closing parenthesis", tokens.index);
                 }
             } else if (peek("[")) {
                 match("[");
                 Ast.Expression output = null;
+
                 if (!peek("]")) {
                     output = parseExpression();
                 }
+
                 match("]");  // Add this line
-                return new Ast.Expression.Access(Optional.of(output), id);
+                return new Ast.Expression.Access(Optional.ofNullable(output), id);
             } else {
                 Ast.Expression output = new Ast.Expression.Access(Optional.empty(), id);
                 return output;
             }
         }
-        throw new ParseException("Nothing Matched", tokens.index);
+
+        throw new ParseException("Invalid expression", tokens.index);
     }
 
 
