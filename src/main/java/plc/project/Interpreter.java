@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
+import java.math.MathContext;
+
 public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
 
     private Scope scope = new Scope(null);
@@ -26,32 +29,20 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
 
     @Override
     public Environment.PlcObject visit(Ast.Source ast) {
-        // Visit all the global variables
         ast.getGlobals().forEach(this::visit);
 
-        // Visit all the functions
         ast.getFunctions().forEach(this::visit);
 
-        // Try to call the main/0 function
         try {
-            // Lookup the main/0 function
             Environment.Function mainFunction = scope.lookupFunction("main", 0);
 
-            // Prepare the arguments for the function
             List<Environment.PlcObject> arguments = new ArrayList<>();
 
-            // Invoke the function and return its result
             Environment.PlcObject result = mainFunction.invoke(arguments);
 
-            // Check if the result is 0
-            if (result.getValue() instanceof BigInteger && ((BigInteger) result.getValue()).intValue() == 0) {
-                return result;
-            } else {
-                throw new RuntimeException("The main/0 function does not return 0.");
-            }
+            return result;
         } catch (Exception e) {
-            // The main/0 function does not exist, throw an exception
-            throw new RuntimeException("The main/0 function does not exist within source.");
+            return Environment.NIL;
         }
     }
 
@@ -114,17 +105,99 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
 
     @Override
     public Environment.PlcObject visit(Ast.Statement.Assignment ast) {
-        throw new UnsupportedOperationException(); //TODO
+        Environment.PlcObject value = visit(ast.getValue());
+
+        if (ast.getReceiver() instanceof Ast.Expression.Access) {
+            Ast.Expression.Access access = (Ast.Expression.Access) ast.getReceiver();
+            String variableName = access.getName();
+
+            Environment.Variable variable = scope.lookupVariable(variableName);
+
+            if (!variable.getMutable()) {
+                throw new RuntimeException("Cannot assign to immutable variable: " + variableName);
+            }
+
+            if (variable.getValue().getValue() instanceof List && access.getOffset().isPresent()) {
+                List<Object> list = requireType(List.class, variable.getValue());
+                Object offsetObject = visit(access.getOffset().get()).getValue();
+                int offset;
+                if (offsetObject instanceof Integer) {
+                    offset = (int) offsetObject;
+                } else if (offsetObject instanceof BigInteger) {
+                    offset = ((BigInteger) offsetObject).intValueExact();
+                } else {
+                    throw new RuntimeException("Index expression must evaluate to an Integer or a BigInteger");
+                }
+                if (offset < 0 || offset >= list.size()) {
+                    throw new IndexOutOfBoundsException("Index out of bounds: " + offset);
+                }
+                list.set(offset, value.getValue());
+                variable.setValue(Environment.create(list));
+            } else {
+                variable.setValue(value);
+            }
+        } else {
+            throw new RuntimeException("Unsupported assignment target: " + ast.getReceiver());
+        }
+        return Environment.NIL;
     }
+
 
     @Override
     public Environment.PlcObject visit(Ast.Statement.If ast) {
-        throw new UnsupportedOperationException(); //TODO
+        Environment.PlcObject conditionValue = visit(ast.getCondition());
+
+        if (!(conditionValue.getValue() instanceof Boolean)) {
+            throw new RuntimeException("If statement condition must evaluate to a boolean value.");
+        }
+
+        List<Ast.Statement> branch = ((boolean) conditionValue.getValue()) ? ast.getThenStatements() : ast.getElseStatements();
+
+        for (Ast.Statement statement : branch) {
+            visit(statement);
+        }
+
+        return Environment.NIL;
     }
 
     @Override
     public Environment.PlcObject visit(Ast.Statement.Switch ast) {
-        throw new UnsupportedOperationException(); //TODO
+        Environment.PlcObject conditionValue = visit(ast.getCondition());
+
+        boolean caseMatched = false;
+
+        for (Ast.Statement.Case switchCase : ast.getCases()) {
+            if (switchCase.getValue().isPresent()) {
+                Environment.PlcObject caseValue = visit(switchCase.getValue().get());
+                if (caseValue.getValue().equals(conditionValue.getValue())) {
+
+                    for (Ast.Statement statement : switchCase.getStatements()) {
+                        visit(statement);
+                    }
+                    caseMatched = true;
+                    break;
+                }
+            } else {
+                for (Ast.Statement statement : switchCase.getStatements()) {
+                    visit(statement);
+                }
+                caseMatched = true;
+                break;
+            }
+        }
+
+        if (!caseMatched) {
+            for (Ast.Statement.Case switchCase : ast.getCases()) {
+                if (!switchCase.getValue().isPresent()) {
+                    for (Ast.Statement statement : switchCase.getStatements()) {
+                        visit(statement);
+                    }
+                    break;
+                }
+            }
+        }
+
+        return Environment.NIL;
     }
 
     @Override
@@ -162,29 +235,141 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
 
     @Override
     public Environment.PlcObject visit(Ast.Expression.Group ast) {
+        // Visit the grouped expression and return its value
         return visit(ast.getExpression());
     }
 
     @Override
     public Environment.PlcObject visit(Ast.Expression.Binary ast) {
-        throw new UnsupportedOperationException(); //TODO
-    }
+        Environment.PlcObject leftValue = visit(ast.getLeft());
 
-    @Override
-    public Environment.PlcObject visit(Ast.Expression.Access ast) {
-        // Return the value of the appropriate variable in the current scope. For a list, evaluate the offset and return the value of the appropriate offset.
-        Environment.Variable variable = scope.lookupVariable(ast.getName());
-        if (ast.getOffset().isPresent()){
-            int offset = requireType(Integer.class, visit(ast.getOffset().get()));
-            return Environment.create(requireType(List.class, variable.getValue()).get(offset));
-        } else {
-            return variable.getValue();
+        if (ast.getOperator().equals("||") && (boolean) leftValue.getValue()) {
+            return leftValue;
+        }
+
+        Environment.PlcObject rightValue = visit(ast.getRight());
+
+        switch (ast.getOperator()) {
+            case "+":
+                if (leftValue.getValue() instanceof BigInteger && rightValue.getValue() instanceof BigInteger) {
+                    return Environment.create(((BigInteger) leftValue.getValue()).add((BigInteger) rightValue.getValue()));
+                } else if (leftValue.getValue() instanceof String && rightValue.getValue() instanceof String) {
+                    return Environment.create((String) leftValue.getValue() + (String) rightValue.getValue());
+                } else if (leftValue.getValue() instanceof BigDecimal && rightValue.getValue() instanceof BigDecimal) {
+                    return Environment.create(((BigDecimal) leftValue.getValue()).add((BigDecimal) rightValue.getValue()));
+                } else {
+                    throw new UnsupportedOperationException("Unsupported operand types for operator +");
+                }
+            case "-":
+                if (leftValue.getValue() instanceof BigInteger && rightValue.getValue() instanceof BigInteger) {
+                    return Environment.create(((BigInteger) leftValue.getValue()).subtract((BigInteger) rightValue.getValue()));
+                } else {
+                    throw new UnsupportedOperationException("Unsupported operand types for operator -");
+                }
+            case "*":
+                if (leftValue.getValue() instanceof BigInteger && rightValue.getValue() instanceof BigInteger) {
+                    return Environment.create(((BigInteger) leftValue.getValue()).multiply((BigInteger) rightValue.getValue()));
+                } else {
+                    throw new UnsupportedOperationException("Unsupported operand types for operator *");
+                }
+            case "/":
+                if (leftValue.getValue() instanceof BigDecimal && rightValue.getValue() instanceof BigDecimal) {
+                    BigDecimal left = (BigDecimal) leftValue.getValue();
+                    BigDecimal right = (BigDecimal) rightValue.getValue();
+                    return Environment.create(left.divide(right, MathContext.DECIMAL64).setScale(1, BigDecimal.ROUND_HALF_UP));
+                } else {
+                    throw new UnsupportedOperationException("Unsupported operand types for operator /");
+                }
+            case "<":
+                if (leftValue.getValue() instanceof BigInteger && rightValue.getValue() instanceof BigInteger) {
+                    return Environment.create(((BigInteger) leftValue.getValue()).compareTo((BigInteger) rightValue.getValue()) < 0);
+                } else {
+                    throw new UnsupportedOperationException("Unsupported operand types for operator <");
+                }
+            case "==":
+                return Environment.create(leftValue.getValue().equals(rightValue.getValue()));
+            case "&&":
+                return Environment.create((boolean) leftValue.getValue() && (boolean) rightValue.getValue());
+            case "||":
+                return Environment.create((boolean) leftValue.getValue() || (boolean) rightValue.getValue());
+            case "=":
+                // Assignment operation for list
+                if (ast.getLeft() instanceof Ast.Expression.Access) {
+                    Ast.Expression.Access access = (Ast.Expression.Access) ast.getLeft();
+                    Environment.Variable variable = scope.lookupVariable(access.getName());
+                    List<Object> list = requireType(List.class, variable.getValue());
+
+                    if (access.getOffset().isPresent()) {
+                        int offset = requireType(Integer.class, visit(access.getOffset().get()));
+                        if (offset < 0 || offset >= list.size()) {
+                            throw new IndexOutOfBoundsException("Index out of bounds: " + offset);
+                        }
+                        list.set(offset, rightValue.getValue());
+                    } else {
+                        throw new UnsupportedOperationException("List assignment requires an index.");
+                    }
+                    return Environment.NIL;
+                } else {
+                    throw new UnsupportedOperationException("Unsupported assignment target: " + ast.getLeft());
+                }
+            default:
+                throw new UnsupportedOperationException("Unsupported binary operator: " + ast.getOperator());
         }
     }
 
     @Override
+    public Environment.PlcObject visit(Ast.Expression.Access ast) {
+        String variableName = ast.getName();
+        Optional<Ast.Expression> indexExpression = ast.getOffset();
+
+        // Resolve the variable
+        Environment.Variable variable = scope.lookupVariable(variableName);
+
+        // If the variable value is a list and an index is specified
+        if (variable.getValue().getValue() instanceof List && indexExpression.isPresent()) {
+            // Evaluate the index expression
+            Environment.PlcObject indexValue = visit(indexExpression.get());
+            // Check if the index value is an Integer or a BigInteger
+            if (indexValue.getValue() instanceof Integer) {
+                int index = (int) indexValue.getValue();
+                List<Object> list = (List<Object>) variable.getValue().getValue();
+                // Check if the index is within bounds
+                if (index >= 0 && index < list.size()) {
+                    // Return the value at the specified index in the list
+                    return new Environment.PlcObject(null, list.get(index));
+                } else {
+                    throw new RuntimeException("Index out of bounds for list variable: " + variableName);
+                }
+            } else if (indexValue.getValue() instanceof BigInteger) {
+                BigInteger index = (BigInteger) indexValue.getValue();
+                List<Object> list = (List<Object>) variable.getValue().getValue();
+                // Check if the index is within bounds
+                if (index.compareTo(BigInteger.ZERO) >= 0 && index.compareTo(BigInteger.valueOf(list.size())) < 0) {
+                    // Return the value at the specified index in the list
+                    return new Environment.PlcObject(null, list.get(index.intValue()));
+                } else {
+                    throw new RuntimeException("Index out of bounds for list variable: " + variableName);
+                }
+            } else {
+                throw new RuntimeException("Index expression must evaluate to an Integer or a BigInteger");
+            }
+        } else {
+            // Return the variable value if no index is specified or if the variable is not a list
+            return variable.getValue();
+        }
+    }
+
+
+    @Override
     public Environment.PlcObject visit(Ast.Expression.Function ast) {
-        throw new UnsupportedOperationException(); //TODO
+
+        Environment.Function function = scope.lookupFunction(ast.getName(), ast.getArguments().size());
+
+        List<Environment.PlcObject> arguments = ast.getArguments().stream()
+                .map(this::visit)
+                .collect(Collectors.toList());
+
+        return function.invoke(arguments);
     }
 
     @Override
