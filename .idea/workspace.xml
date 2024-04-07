@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="New files for Analyzer">
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/plc/project/Analyzer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/plc/project/Analyzer.java" afterDir="false" />
     </list>
@@ -48,6 +49,7 @@
   "keyToString": {
     "Gradle.Build PLC_Project.executor": "Run",
     "JUnit.AnalyzerTests.executor": "Run",
+    "JUnit.AnalyzerTests.testLiteralExpression.executor": "Run",
     "JUnit.InterpreterTests.executor": "Run",
     "JUnit.InterpreterTests.testListAccessExpression.executor": "Run",
     "JUnit.InterpreterTests.testListAssignmentStatement.executor": "Run",
@@ -88,7 +90,38 @@
       <recent name="C:\Users\valca\OneDrive\Documents\UF School\Spring 2024\CIS4020\IntelliJ Projects\PLC_Project\src\test\java\plc\project" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="JUnit.AnalyzerTests">
+    <configuration name="AnalyzerTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PLC_Project.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="plc.project.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="plc.project" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.AnalyzerTests" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AnalyzerTests.testLiteralExpression" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PLC_Project.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="plc.project.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="plc.project" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.AnalyzerTests" />
+      <option name="METHOD_NAME" value="testLiteralExpression(java.lang.String,plc.project.Ast$Expression$Literal,plc.project.Ast$Expression$Literal)" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="InterpreterTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PLC_Project.test" />
       <extension name="coverage">
@@ -136,45 +169,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="InterpreterTests.testSource" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="PLC_Project.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="plc.project.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.InterpreterTests" />
-      <option name="METHOD_NAME" value="testSource(java.lang.String,plc.project.Ast$Source,java.lang.Object)" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="InterpreterTests.testSwitchStatement" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="PLC_Project.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="plc.project.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.InterpreterTests" />
-      <option name="METHOD_NAME" value="testSwitchStatement" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.AnalyzerTests" />
+        <item itemvalue="JUnit.AnalyzerTests.testLiteralExpression" />
         <item itemvalue="JUnit.InterpreterTests" />
         <item itemvalue="JUnit.InterpreterTests.testListAssignmentStatement" />
         <item itemvalue="JUnit.InterpreterTests.testListAccessExpression" />
-        <item itemvalue="JUnit.InterpreterTests.testSwitchStatement" />
-        <item itemvalue="JUnit.InterpreterTests.testSource" />
       </list>
     </recent_temporary>
   </component>
@@ -206,6 +207,7 @@
       <workItem from="1711058798892" duration="5543000" />
       <workItem from="1711145975825" duration="15588000" />
       <workItem from="1711996132715" duration="19133000" />
+      <workItem from="1712371400136" duration="23585000" />
     </task>
     <task id="LOCAL-00001" summary="Mostly finished lexer">
       <option name="closed" value="true" />
@@ -321,6 +323,11 @@
           <properties class="java.lang.UnsupportedOperationException" package="java.lang" />
           <option name="timeStamp" value="1" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/plc/project/Environment.java</url>
+          <line>257</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
