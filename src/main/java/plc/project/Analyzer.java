@@ -138,6 +138,9 @@ public final class Analyzer implements Ast.Visitor<Void> {
                 Environment.Type paramType = parameterTypes.get(i);
                 scope.defineVariable(paramName, paramName, paramType, true, Environment.NIL);
             }
+
+            scope.defineVariable("Return", "Return", returnType, true, Environment.NIL);
+
             for (Ast.Statement statement : ast.getStatements()) {
                 if (statement instanceof Ast.Statement.Expression) {
                     visit((Ast.Statement.Expression) statement);
@@ -179,71 +182,25 @@ public final class Analyzer implements Ast.Visitor<Void> {
 
     @Override
     public Void visit(Ast.Statement.Declaration ast) {
-        String name = ast.getName();
-        Optional<String> typeName = ast.getTypeName();
+        Environment.Type variableType = null;
         Optional<Ast.Expression> value = ast.getValue();
-
-        if (!typeName.isPresent() && value.isPresent()) {
-            throw new RuntimeException("Initialization value provided without type declaration for variable '" + name + "'.");
+        if(ast.getTypeName().isPresent()){
+            variableType = Environment.getType((String)ast.getTypeName().get());
+        }
+        else if (value.isPresent()) {
+            visit((Ast.Expression)value.get());
+            variableType = value.get().getType();
+        }
+        else {
+            throw new RuntimeException("No type or value provided for declaration.");
         }
 
-        if (typeName.isPresent()) {
-            String typeNameString = typeName.get();
-            Environment.Type type;
-
-            // Determine the type based on the type name string
-            switch (typeNameString) {
-                case "Any":
-                    type = Environment.Type.ANY;
-                    break;
-                case "Nil":
-                    type = Environment.Type.NIL;
-                    break;
-                case "Comparable":
-                    type = Environment.Type.COMPARABLE;
-                    break;
-                case "Boolean":
-                    type = Environment.Type.BOOLEAN;
-                    break;
-                case "Integer":
-                    type = Environment.Type.INTEGER;
-                    break;
-                case "Decimal":
-                    type = Environment.Type.DECIMAL;
-                    break;
-                case "Character":
-                    type = Environment.Type.CHARACTER;
-                    break;
-                case "String":
-                    type = Environment.Type.STRING;
-                    break;
-                default:
-                    throw new RuntimeException("Unknown type: " + typeNameString);
-            }
-
-
-            Environment.Variable variable = scope.defineVariable(name, name, type, true, null); // Set jvmName to name here
-
-
-            value.ifPresent(expression -> {
-
-                visit(expression);
-
-
-                requireAssignable(type, expression.getType());
-
-
-            });
-
-            ast.setVariable(variable);
-        } else {
-
-            if (value.isPresent()) {
-                throw new RuntimeException("Initialization value provided without type declaration for variable '" + name + "'.");
-            } else {
-                throw new RuntimeException("Missing type for variable: " + name);
-            }
+        if(value.isPresent()){
+            requireAssignable(variableType, value.get().getType());
         }
+
+        scope.defineVariable(ast.getName(), ast.getName(), variableType, true, Environment.NIL);
+        ast.setVariable(scope.lookupVariable(ast.getName()));
 
         return null;
 
@@ -263,25 +220,27 @@ public final class Analyzer implements Ast.Visitor<Void> {
 
     @Override
     public Void visit(Ast.Statement.If ast) {
+        visit(ast.getCondition());
         if(ast.getThenStatements().isEmpty()){
             throw new RuntimeException("Then statements are empty!");
         }
-        visit(ast.getCondition());
-        requireAssignable(Environment.Type.BOOLEAN, ast.getCondition().getType());
-        if(!(ast.getElseStatements().isEmpty())){
-            for (int i = 0; i < ast.getElseStatements().size(); i++) {
-                try {
-                    scope = new Scope(scope);
-                    visit(ast.getElseStatements().get(i));
-                } finally {
-                    scope = scope.getParent();
-                }
-            }
+        if(ast.getCondition().getType() != Environment.Type.BOOLEAN){
+            throw new RuntimeException("Condition is not boolean!");
         }
-        for (int i = 0; i < ast.getThenStatements().size(); i++) {
+
+        for(Ast.Statement statement : ast.getThenStatements()){
             try {
                 scope = new Scope(scope);
-                visit(ast.getThenStatements().get(i));
+                visit(statement);
+            } finally {
+                scope = scope.getParent();
+            }
+        }
+
+        for(Ast.Statement statement : ast.getElseStatements()){
+            try {
+                scope = new Scope(scope);
+                visit(statement);
             } finally {
                 scope = scope.getParent();
             }
@@ -315,8 +274,8 @@ public final class Analyzer implements Ast.Visitor<Void> {
                 Ast.Expression caseValue = caseStatement.getValue().get();
                 visit(caseValue); // Visit the case value expression
                 Environment.Type caseValueType = caseValue.getType();
-                if (caseValueType != null && caseValueType.equals(conditionType)) {
-                    isConditionMatched = true;
+                if (caseValueType != conditionType) {
+                    throw new RuntimeException("Type mismatch between switch condition and case value");
                 }
             }
 
@@ -384,7 +343,7 @@ public final class Analyzer implements Ast.Visitor<Void> {
     public Void visit(Ast.Statement.Return ast) {
         try {
             visit(ast.getValue());
-            Environment.Variable variable = scope.lookupVariable("return");
+            Environment.Variable variable = scope.lookupVariable("Return");
             requireAssignable(variable.getType(), ast.getValue().getType());
         } catch (RuntimeException r) {
             throw new RuntimeException(r);
@@ -510,9 +469,11 @@ public final class Analyzer implements Ast.Visitor<Void> {
     @Override
     public Void visit(Ast.Expression.Function ast) {
         try {
-            List<Environment.Type> parameterTypes = ast.getArguments().stream().map(Ast.Expression::getType).collect(Collectors.toList());
-            Environment.Function function = scope.lookupFunction(ast.getName(), parameterTypes.size());
+            Environment.Function function = scope.lookupFunction(ast.getName(), ast.getArguments().size());
             ast.setFunction(function);
+            for (Ast.Expression expression : ast.getArguments()) {
+                visit(expression);
+            }
         } catch (RuntimeException r) {
             throw new RuntimeException(r);
         }
