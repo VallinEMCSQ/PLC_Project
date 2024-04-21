@@ -277,17 +277,61 @@ public final class Generator implements Ast.Visitor<Void> {
             visit(ast.getLeft());
             print(" + ");
             visit(ast.getRight());
+        } else if (ast.getOperator().equals("-")) {
+            visit(ast.getLeft());
+            print(" - ");
+            visit(ast.getRight());
+        } else if (ast.getOperator().equals("*")) {
+            visit(ast.getLeft());
+            print(" * ");
+            visit(ast.getRight());
+        } else if (ast.getOperator().equals("/")) {
+            visit(ast.getLeft());
+            print(" / ");
+            visit(ast.getRight());
+        } else if (ast.getOperator().equals("%")) {
+            visit(ast.getLeft());
+            print(" % ");
+            visit(ast.getRight());
+        } else if (ast.getOperator().equals("<")) {
+            visit(ast.getLeft());
+            print(" < ");
+            visit(ast.getRight());
+        } else if (ast.getOperator().equals("<=")) {
+            visit(ast.getLeft());
+            print(" <= ");
+            visit(ast.getRight());
+        } else if (ast.getOperator().equals(">")) {
+            visit(ast.getLeft());
+            print(" > ");
+            visit(ast.getRight());
+        } else if (ast.getOperator().equals(">=")) {
+            visit(ast.getLeft());
+            print(" >= ");
+            visit(ast.getRight());
+        } else if (ast.getOperator().equals("==")) {
+            visit(ast.getLeft());
+            print(" == ");
+            visit(ast.getRight());
+        } else if (ast.getOperator().equals("!=")) {
+            visit(ast.getLeft());
+            print(" != ");
+            visit(ast.getRight());
         } else if (ast.getOperator().equals("&&")) {
             visit(ast.getLeft());
             print(" && ");
             visit(ast.getRight());
-        } else {
-            print("(");
+        } else if (ast.getOperator().equals("||")) {
             visit(ast.getLeft());
             print(" ", ast.getOperator(), " ");
             visit(ast.getRight());
-            print(")");
+        } else if (ast.getOperator().equals("^")) {
+            print("Math.pow(", ast.getLeft(), ", ", ast.getRight(), ")");
         }
+        else {
+            throw new RuntimeException("Invalid operator: " + ast.getOperator());
+        }
+
         return null;
     }
 

@@ -59,6 +59,37 @@ public class GeneratorTests {
         );
     }
 
+    @ParameterizedTest(name = "{0}")
+    @MethodSource
+    void testGlobal(String test, Ast.Global ast, String expected) {
+        test(ast, expected);
+    }
+
+    private static Stream<Arguments> testGlobal() {
+        return Stream.of(
+                Arguments.of("Integer",
+                        // LET number: Integer;
+                        new Ast.Global("number", "Integer", false, Optional.empty()),
+                        "int number;"
+                ),
+                Arguments.of("Decimal",
+                        // VAR pi: Decimal = 3.14159;
+                        new Ast.Global("pi", "Decimal", true, Optional.of(init(new Ast.Expression.Literal(new BigDecimal("3.14159")), ast -> ast.setType(Environment.Type.DECIMAL)))),
+                        "double pi = 3.14159;"
+                ),
+                Arguments.of("String",
+                        // CONST message: String = "Hello, World!";
+                        new Ast.Global("message", "String", false, Optional.of(init(new Ast.Expression.Literal("Hello, World!"), ast -> ast.setType(Environment.Type.STRING)))),
+                        "final String message = \"Hello, World!\";"
+                ),
+                Arguments.of("Boolean",
+                        // LET flag: Boolean;
+                        new Ast.Global("flag", "Boolean", false, Optional.empty()),
+                        "boolean flag;"
+                )
+        );
+    }
+
     @Test
     void testList() {
         // LIST list: Decimal = [1.0, 1.5, 2.0];
@@ -95,6 +126,27 @@ public class GeneratorTests {
                                 init(new Ast.Expression.Literal(new BigDecimal("1.0")),ast -> ast.setType(Environment.Type.DECIMAL))
                         )), ast -> ast.setVariable(new Environment.Variable("name", "name", Environment.Type.DECIMAL, true, Environment.NIL))),
                         "double name = 1.0;"
+                )
+        );
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource
+    void testAccessExpression(String test, Ast.Expression.Access ast, String expected) {
+        test(ast, expected);
+    }
+
+    private static Stream<Arguments> testAccessExpression() {
+        return Stream.of(
+                Arguments.of("Variable",
+                        // name
+                        init(new Ast.Expression.Access(Optional.empty(), "name"), ast -> ast.setVariable(new Environment.Variable("name", "name", Environment.Type.ANY, true, Environment.NIL))),
+                        "name"
+                ),
+                Arguments.of("List",
+                        // list[0]
+                        init(new Ast.Expression.Access( Optional.of(init(new Ast.Expression.Literal(BigInteger.ZERO), ast -> ast.setType(Environment.Type.INTEGER))), "list"), ast -> ast.setVariable(new Environment.Variable("list", "list", Environment.Type.DECIMAL, true, Environment.create(Arrays.asList(new Double(1.0), new Double(1.5), new Double(2.0)))))),
+                        "list[0]"
                 )
         );
     }
@@ -227,6 +279,97 @@ public class GeneratorTests {
                                 init(new Ast.Expression.Literal(BigInteger.TEN), ast -> ast.setType(Environment.Type.INTEGER))
                         ), ast -> ast.setType(Environment.Type.STRING)),
                         "\"Ben\" + 10"
+                ),
+                Arguments.of("Equality",
+                        // 1 == 2
+                        init(new Ast.Expression.Binary("==",
+                                init(new Ast.Expression.Literal(BigInteger.ONE), ast -> ast.setType(Environment.Type.INTEGER)),
+                                init(new Ast.Expression.Literal(BigInteger.TWO), ast -> ast.setType(Environment.Type.INTEGER))
+                        ), ast -> ast.setType(Environment.Type.BOOLEAN)),
+                        "1 == 2"
+                ),
+                Arguments.of("Greater",
+                        // 1 > 2
+                        init(new Ast.Expression.Binary(">",
+                                init(new Ast.Expression.Literal(BigInteger.ONE), ast -> ast.setType(Environment.Type.INTEGER)),
+                                init(new Ast.Expression.Literal(BigInteger.TWO), ast -> ast.setType(Environment.Type.INTEGER))
+                        ), ast -> ast.setType(Environment.Type.BOOLEAN)),
+                        "1 > 2"
+                ),
+                Arguments.of("Less",
+                        // 1 < 2
+                        init(new Ast.Expression.Binary("<",
+                                init(new Ast.Expression.Literal(BigInteger.ONE), ast -> ast.setType(Environment.Type.INTEGER)),
+                                init(new Ast.Expression.Literal(BigInteger.TWO), ast -> ast.setType(Environment.Type.INTEGER))
+                        ), ast -> ast.setType(Environment.Type.BOOLEAN)),
+                        "1 < 2"
+                ),
+                Arguments.of("Subtraction",
+                        // 1 - 2
+                        init(new Ast.Expression.Binary("-",
+                                init(new Ast.Expression.Literal(BigInteger.ONE), ast -> ast.setType(Environment.Type.INTEGER)),
+                                init(new Ast.Expression.Literal(BigInteger.TWO), ast -> ast.setType(Environment.Type.INTEGER))
+                        ), ast -> ast.setType(Environment.Type.INTEGER)),
+                        "1 - 2"
+                ),
+                Arguments.of("Multiplication",
+                        // 1 * 2
+                        init(new Ast.Expression.Binary("*",
+                                init(new Ast.Expression.Literal(BigInteger.ONE), ast -> ast.setType(Environment.Type.INTEGER)),
+                                init(new Ast.Expression.Literal(BigInteger.TWO), ast -> ast.setType(Environment.Type.INTEGER))
+                        ), ast -> ast.setType(Environment.Type.INTEGER)),
+                        "1 * 2"
+                ),
+                Arguments.of("Division",
+                        // 1 / 2
+                        init(new Ast.Expression.Binary("/",
+                                init(new Ast.Expression.Literal(BigInteger.ONE), ast -> ast.setType(Environment.Type.INTEGER)),
+                                init(new Ast.Expression.Literal(BigInteger.TWO), ast -> ast.setType(Environment.Type.INTEGER))
+                        ), ast -> ast.setType(Environment.Type.DECIMAL)),
+                        "1 / 2"
+                ),
+                Arguments.of("Power",
+                        // 1 ^ 2
+                        init(new Ast.Expression.Binary("^",
+                                init(new Ast.Expression.Literal(BigInteger.ONE), ast -> ast.setType(Environment.Type.INTEGER)),
+                                init(new Ast.Expression.Literal(BigInteger.TWO), ast -> ast.setType(Environment.Type.INTEGER))
+                        ), ast -> ast.setType(Environment.Type.INTEGER)),
+                        "Math.pow(1, 2)"
+                )
+        );
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource
+    void testLiteralExpression(String test, Ast.Expression.Literal ast, String expected) {
+        test(ast, expected);
+    }
+    private static Stream<Arguments> testLiteralExpression() {
+        return Stream.of(
+                Arguments.of("Boolean",
+                        // TRUE
+                        init(new Ast.Expression.Literal(true), ast -> ast.setType(Environment.Type.BOOLEAN)),
+                        "true"
+                ),
+                Arguments.of("Integer",
+                        // 1
+                        init(new Ast.Expression.Literal(BigInteger.ONE), ast -> ast.setType(Environment.Type.INTEGER)),
+                        "1"
+                ),
+                Arguments.of("Decimal",
+                        // 1.0
+                        init(new Ast.Expression.Literal(new BigDecimal("1.0")), ast -> ast.setType(Environment.Type.DECIMAL)),
+                        "1.0"
+                ),
+                Arguments.of("Character",
+                        // 'a'
+                        init(new Ast.Expression.Literal('a'), ast -> ast.setType(Environment.Type.CHARACTER)),
+                        "'a'"
+                ),
+                Arguments.of("String",
+                        // "Hello, World!"
+                        init(new Ast.Expression.Literal("Hello, World!"), ast -> ast.setType(Environment.Type.STRING)),
+                        "\"Hello, World!\""
                 )
         );
     }
@@ -245,6 +388,14 @@ public class GeneratorTests {
                                 init(new Ast.Expression.Literal("Hello, World!"), ast -> ast.setType(Environment.Type.STRING))
                         )), ast -> ast.setFunction(new Environment.Function("print", "System.out.println", Arrays.asList(Environment.Type.ANY), Environment.Type.NIL, args -> Environment.NIL))),
                         "System.out.println(\"Hello, World!\")"
+                ),
+                Arguments.of("Add",
+                        // add(1, 2)
+                        init(new Ast.Expression.Function("add", Arrays.asList(
+                                init(new Ast.Expression.Literal(BigInteger.ONE), ast -> ast.setType(Environment.Type.INTEGER)),
+                                init(new Ast.Expression.Literal(BigInteger.TWO), ast -> ast.setType(Environment.Type.INTEGER))
+                        )), ast -> ast.setFunction(new Environment.Function("add", "add", Arrays.asList(Environment.Type.INTEGER, Environment.Type.INTEGER), Environment.Type.INTEGER, args -> Environment.create(((BigInteger) args.get(0).getValue()).add((BigInteger) args.get(1).getValue()))))),
+                        "add(1, 2)"
                 )
         );
     }

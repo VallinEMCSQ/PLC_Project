@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="New files for Analyzer" />
+    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="New files for Analyzer">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/plc/project/Generator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/plc/project/Generator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/plc/project/GeneratorTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/plc/project/GeneratorTests.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,45 +45,47 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.Build PLC_Project.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnalyzerTests.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnalyzerTests.testLiteralExpression.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.InterpreterTests.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.InterpreterTests.testListAccessExpression.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.InterpreterTests.testListAssignmentStatement.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.InterpreterTests.testSource.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.InterpreterTests.testSwitchStatement.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.LexerTests.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.LexerTests.testCharacter.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.LexerTests.testExamples.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.LexerTests.testException.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ParserExpressionTests.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ParserExpressionTests.testExpressionStatement.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.ParserExpressionTests.testFunctionExpression.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ParserExpressionTests.testScenarioParseException.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ParserTests.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ParserTests.testExample1.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ParserTests.testReturnStatement.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ParserTests.testSource.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build PLC_Project.executor": "Run",
+    "JUnit.AnalyzerTests.executor": "Run",
+    "JUnit.AnalyzerTests.testLiteralExpression.executor": "Run",
+    "JUnit.GeneratorTests.executor": "Run",
+    "JUnit.GeneratorTests.testBinaryExpression.executor": "Run",
+    "JUnit.InterpreterTests.executor": "Run",
+    "JUnit.InterpreterTests.testListAccessExpression.executor": "Run",
+    "JUnit.InterpreterTests.testListAssignmentStatement.executor": "Run",
+    "JUnit.InterpreterTests.testSource.executor": "Run",
+    "JUnit.InterpreterTests.testSwitchStatement.executor": "Run",
+    "JUnit.LexerTests.executor": "Run",
+    "JUnit.LexerTests.testCharacter.executor": "Run",
+    "JUnit.LexerTests.testExamples.executor": "Run",
+    "JUnit.LexerTests.testException.executor": "Run",
+    "JUnit.ParserExpressionTests.executor": "Run",
+    "JUnit.ParserExpressionTests.testExpressionStatement.executor": "Debug",
+    "JUnit.ParserExpressionTests.testFunctionExpression.executor": "Run",
+    "JUnit.ParserExpressionTests.testScenarioParseException.executor": "Run",
+    "JUnit.ParserTests.executor": "Run",
+    "JUnit.ParserTests.testExample1.executor": "Run",
+    "JUnit.ParserTests.testReturnStatement.executor": "Run",
+    "JUnit.ParserTests.testSource.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\valca\OneDrive\Documents\UF School\Spring 2024\CIS4020\IntelliJ Projects\PLC_Project\src\main\java\plc\project" />
@@ -133,6 +139,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="GeneratorTests.testBinaryExpression" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PLC_Project.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="plc.project.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="plc.project" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.GeneratorTests" />
+      <option name="METHOD_NAME" value="testBinaryExpression(java.lang.String,plc.project.Ast$Expression$Binary,java.lang.String)" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="InterpreterTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PLC_Project.test" />
       <extension name="coverage">
@@ -148,29 +170,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="InterpreterTests.testListAssignmentStatement" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="PLC_Project.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="plc.project.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.InterpreterTests" />
-      <option name="METHOD_NAME" value="testListAssignmentStatement" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="JUnit.GeneratorTests" />
+        <item itemvalue="JUnit.GeneratorTests.testBinaryExpression" />
         <item itemvalue="JUnit.AnalyzerTests" />
         <item itemvalue="JUnit.AnalyzerTests.testLiteralExpression" />
         <item itemvalue="JUnit.InterpreterTests" />
-        <item itemvalue="JUnit.InterpreterTests.testListAssignmentStatement" />
       </list>
     </recent_temporary>
   </component>
