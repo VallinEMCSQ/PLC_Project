@@ -205,6 +205,38 @@ public class EndToEndGeneratorTests {
         );
     }
 
+    @Test
+    void testGlobalListInitialization() {
+        // LIST list: Decimal = [1, 1.5, 2]; // Attempt to initialize with mixed types
+        String input = "LIST list: Decimal = [1, 1.5, 2];";
+        String expected = "Unexpected java.lang.RuntimeException: java.lang.RuntimeException: Not matching types!";
+        test(input, expected, Parser::parseGlobal);
+    }
+
+    @Test
+    void testFunctionSquare() {
+        // FUN square(x: Integer): Integer DO RETURN x * x; END // Incorrect type of the return statement
+        String input = "FUN square(x: Integer): Integer DO RETURN x * x; END";
+        String expected = "Unexpected java.lang.RuntimeException: java.lang.RuntimeException: java.lang.RuntimeException: Not matching types!";
+        test(input, expected, Parser::parseFunction);
+    }
+
+    @Test
+    void testFunctionMultipleStatements() {
+        // FUN testFunction(): Integer DO x = 1; RETURN x; END // Returning a variable defined in a different scope
+        String input = "FUN testFunction(): Integer DO x = 1; RETURN x; END";
+        String expected = "Unexpected java.lang.RuntimeException: Error in visit method of Ast.Statement.Expression: java.lang.RuntimeException: java.lang.RuntimeException: The variable x is not defined in this scope.";
+        test(input, expected, Parser::parseFunction);
+    }
+
+    @Test
+    void testExpressionAccessList() {
+        // list[1] // Attempt to access uninitialized list
+        String input = "list[1];";
+        String expected = "Unexpected java.lang.IllegalStateException (type is uninitialized)";
+        test(input, expected, Parser::parseExpression);
+    }
+
     /**
      * Helper function for tests, using a StringWriter as the output stream.
      */
