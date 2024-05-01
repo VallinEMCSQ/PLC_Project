@@ -23,7 +23,18 @@ public class LexerTests {
                 Arguments.of("Alphabetic", "getName", true),
                 Arguments.of("Alphanumeric", "thelegend27", true),
                 Arguments.of("Leading Hyphen", "-five", false),
-                Arguments.of("Leading Digit", "1fish2fish3fishbluefish", false)
+                Arguments.of("Leading Digit", "1fish2fish3fishbluefish", false),
+                Arguments.of("Alphabetic", "abc", true),
+                Arguments.of("Alphanumeric", "abc123", true),
+                Arguments.of("Underscores", "a_b_c", true),
+                Arguments.of("Hypens", "a-b-c", true),
+                Arguments.of("Leading AT", "@abc", true),
+                Arguments.of("Leading Underscore", "_abc", false),
+                Arguments.of("Digit Letters", "1abc", false),
+                Arguments.of("Capitals", "ABC", true),
+                Arguments.of("short identifier", "a", true),
+                Arguments.of("long identifier", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-",
+                        true)
         );
     }
 
@@ -39,7 +50,10 @@ public class LexerTests {
                 Arguments.of("Multiple Digits", "12345", true),
                 Arguments.of("Negative", "-1", true),
                 Arguments.of("Leading Zero", "01", false),
-                Arguments.of("No Decimal Leading Zero", "001", false)
+                Arguments.of("No Decimal Leading Zero", "001", false),
+                Arguments.of("Negative Zero", "-0", false),
+                Arguments.of("Zero", "0", true),
+                Arguments.of("Above long max", "123456789123456789123456789", false)
         );
     }
 
@@ -57,7 +71,8 @@ public class LexerTests {
                 Arguments.of("Leading Decimal", ".5", false),
                 Arguments.of("Negative Decimal Zero", "-0.0", true),
                 Arguments.of("Decimal No Leading Zero", ".0", false),
-                Arguments.of("Decimal No Leading Zero", "01.3", false)
+                Arguments.of("Decimal No Leading Zero", "01.3", false),
+                Arguments.of("Trailing Zeros", "111.000", false)
         );
     }
 
@@ -72,7 +87,11 @@ public class LexerTests {
                 Arguments.of("Alphabetic", "\'c\'", true),
                 Arguments.of("Newline Escape", "\'\\n\'", true),
                 Arguments.of("Empty", "\'\'", false),
-                Arguments.of("Multiple", "\'abc\'", false)
+                Arguments.of("Multiple", "\'abc\'", false),
+                Arguments.of("Unterminated", "\'a", false),
+                Arguments.of("Invalid Escape", "\'\\e\'", false),
+                Arguments.of("Unicode", "\'\\u0000\'", true),
+                Arguments.of("space", "\' \'", false)
         );
     }
 
@@ -104,7 +123,12 @@ public class LexerTests {
                 Arguments.of("Character", "(", true),
                 Arguments.of("Comparison", "!=", true),
                 Arguments.of("Space", " ", false),
-                Arguments.of("Tab", "\t", false)
+                Arguments.of("Tab", "\t", false),
+                Arguments.of("Remainder", "%", true),
+                Arguments.of("Unicode", "\u0000", true),
+                Arguments.of("Plus", "+", true),
+                Arguments.of("Hypen", "-", true),
+                Arguments.of("Form Feed", "\f", false)
         );
     }
 

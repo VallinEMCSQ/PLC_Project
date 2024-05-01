@@ -56,13 +56,14 @@ public final class Lexer {
     public Token lexToken() {
         if (peek("[A-Za-z@]")){
             return lexIdentifier();
-        } else if (peek("[0-9]") || peek("-")) {
+        } else if (peek("[0-9]") || peek("-", "0-9")) {
             return lexNumber();
         } else if (peek("'")) {
             return lexCharacter();
         } else if (peek("\"")) {
             return lexString();
-        } else {
+        }
+        else {
             return lexOperator();
         }
     }
@@ -75,54 +76,81 @@ public final class Lexer {
     }
 
     public Token lexNumber() {
-        // Negative
-        match("-");
-        // Matches everything prior to a possible decimal as long as the first number is not 0
-        if(match("[1-9]")){
-            while(match("[0-9]")){
+        Boolean isDecimal = false;
+        Boolean isNegative = false;
 
+        // Checks for negative number
+        if(peek("-")){
+            match("-");
+            isNegative = true;
+        }
+        // Checks for starting zero
+        if(peek("0")){
+            match("0");
+            if (peek("\\.")){
+                match("\\.");
+                if (match("[0-9]")){
+                    if (peek("0")){
+                        throw new ParseException("Invalid Number: Trailing Zero", chars.index);
+                    }
+                    isDecimal = true;
+                }
+                else {
+                    return chars.emit(Token.Type.INTEGER);
+                }
+            } else if (peek("[0-9]")){
+                throw new ParseException("Invalid Number", chars.index);
+            }
+            if (isNegative && !isDecimal){
+                throw new ParseException("Invalid Number: Negative Zero", chars.index);
             }
         }
-        // If first number is 0, must be proceeded by decimal. Otherwise, return integer token
-        match("0");
 
-        if(peek(".") && !peek(";") && !peek("-")) {
-            match(".");
-            if(!peek("[0-9]")){
-                throw new ParseException("Invalid Decimal", chars.index);
-            }
-            while(match("[0-9]")){
+        while(peek("[0-9]") && !isDecimal){
+            match("[0-9]");
+        }
 
-            }
-            return chars.emit(Token.Type.DECIMAL);
-        }
-        else if(peek("[0-9]")){
-            throw new ParseException("Invalid Number", chars.index);
-        }
-        else {
+        // Checks for decimal
+        if(peek("\\.", "[0-9]")){
+            match("\\.");
+            isDecimal = true;
+        } else if (!isDecimal){
             return chars.emit(Token.Type.INTEGER);
         }
+
+        while (isDecimal && peek("[0-9]")){
+            match("[0-9]");
+        }
+
+        if(!isDecimal){
+            return chars.emit(Token.Type.INTEGER);
+        } else {
+            return chars.emit(Token.Type.DECIMAL);
+        }
+
     }
 
     public Token lexCharacter() {
-        match("'");
-        if(peek("'")){
-            throw new ParseException("Invalid Character", chars.index);
-        }
-        // Checks for escape character
-        if(peek("\\\\") || peek( "([^'\\n\\r])")){
-            if(peek("\\\\")){
-                lexEscape();
+        if(match("'")) {
+            if (peek("'")) {
+                throw new ParseException("Invalid Character", chars.index);
             }
-            else{
-                match("[^'\\n\\r]");
+            // Checks for escape character
+            if (peek("\\\\") || peek("([^'\\n\\r])")) {
+                if (peek("\\\\")) {
+                    lexEscape();
+                } else {
+                    match("[^'\\n\\r]");
+                }
+            }
+            if (peek("'")) {
+                match("'");
+                return chars.emit(Token.Type.CHARACTER);
+            } else {
+                throw new ParseException("Invalid Character", chars.index);
             }
         }
-        if(peek("'")){
-            match("'");
-            return chars.emit(Token.Type.CHARACTER);
-        }
-        else{
+        else {
             throw new ParseException("Invalid Character", chars.index);
         }
     }
@@ -157,20 +185,28 @@ public final class Lexer {
     }
 
     public Token lexOperator() {
-        if(match("[!=]", "=") || match("=")){
+        if(match("[<>!=]")){
+            match("=");
+            return chars.emit(Token.Type.OPERATOR);
+        } else if (match("&", "&") || match("|", "|")) {
+            return chars.emit(Token.Type.OPERATOR);
+        } else if (match(".")){
+            return chars.emit(Token.Type.OPERATOR);
+        }else {
+            throw new ParseException("Invalid Operator", chars.index);
+        }
+        /*if(match("[!=]", "=") || match("=") || match(":")){
             return chars.emit(Token.Type.OPERATOR);
         } else if(match("&", "&")){
             return chars.emit(Token.Type.OPERATOR);
         } else if (match("|", "|")) {
             return chars.emit(Token.Type.OPERATOR);
         } else if(match("[<(;)>]")){
-            // Might need to be if else
             // Any other character except whitespace
             return chars.emit(Token.Type.OPERATOR);
-        }
-        else {
-            throw new ParseException("Invalid Operator", chars.index);
-        }
+        } else if () {
+
+        }*/
     }
 
     /**
@@ -179,11 +215,15 @@ public final class Lexer {
      * return true if the next characters are {@code 'a', 'b', 'c'}.
      */
     public boolean peek(String... patterns) {
+        //System.out.println("Before peek: " + chars.index + " " + chars.get(0));
+
         for(int i = 0; i < patterns.length; i++){
             if(!chars.has(i) || !String.valueOf(chars.get(i)).matches(patterns[i])){
                 return false;
             }
         }
+
+        //System.out.println("After peek: " + chars.index + " " + chars.get(0));
         return true; //TODO (in Lecture)
     }
 

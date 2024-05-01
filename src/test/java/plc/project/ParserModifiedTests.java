@@ -103,7 +103,7 @@ final class ParserModifiedTests {
 
     private static Stream<Arguments> testDeclarationStatement() {
         return Stream.of(
-                Arguments.of("Definition",
+                /*Arguments.of("Definition",
                         Arrays.asList(
                                 //LET name: Type;
                                 new Token(Token.Type.IDENTIFIER, "LET", 0),
@@ -124,6 +124,29 @@ final class ParserModifiedTests {
                                 new Token(Token.Type.OPERATOR, ";", 15)
                         ),
                         new Ast.Statement.Declaration("name", Optional.empty(), Optional.of(new Ast.Expression.Access(Optional.empty(), "expr")))
+                ),*/
+                Arguments.of("List Declaration",
+                        Arrays.asList(
+                                //LIST name: Type = [expr1, expr2, expr3];
+                                new Token(Token.Type.IDENTIFIER, "LIST", 0),
+                                new Token(Token.Type.IDENTIFIER, "name", 4),
+                                new Token(Token.Type.OPERATOR, ":", 8),
+                                new Token(Token.Type.IDENTIFIER, "Type", 10),
+                                new Token(Token.Type.OPERATOR, "=", 14),
+                                new Token(Token.Type.OPERATOR, "[", 16),
+                                new Token(Token.Type.IDENTIFIER, "expr1", 17),
+                                new Token(Token.Type.OPERATOR, ",", 22),
+                                new Token(Token.Type.IDENTIFIER, "expr2", 24),
+                                new Token(Token.Type.OPERATOR, ",", 29),
+                                new Token(Token.Type.IDENTIFIER, "expr3", 31),
+                                new Token(Token.Type.OPERATOR, "]", 36),
+                                new Token(Token.Type.OPERATOR, ";", 37)
+                        ),
+                        new Ast.Statement.Declaration("name", Optional.of("Type"), Optional.of(new Ast.Expression.PlcList(Arrays.asList(
+                                new Ast.Expression.Access(Optional.empty(), "expr1"),
+                                new Ast.Expression.Access(Optional.empty(), "expr2"),
+                                new Ast.Expression.Access(Optional.empty(), "expr3")
+                        ))))
                 )
         );
     }

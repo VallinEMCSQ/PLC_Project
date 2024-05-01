@@ -52,7 +52,18 @@ public final class Analyzer implements Ast.Visitor<Void> {
 
     @Override
     public Void visit(Ast.Global ast) {
-        String name = ast.getName();
+        if (ast.getValue().isPresent()) {
+            if(ast.getValue().get().getClass() == Ast.Expression.PlcList.class){
+                Ast.Expression.PlcList temp = (Ast.Expression.PlcList)ast.getValue().get();
+                temp.setType(Environment.getType(ast.getTypeName()));
+            }
+            visit(ast.getValue().get());
+            requireAssignable(Environment.getType(ast.getTypeName()), ast.getValue().get().getType());
+        }
+        scope.defineVariable(ast.getName(), ast.getName(), Environment.getType(ast.getTypeName()), true, Environment.NIL);
+        ast.setVariable(scope.lookupVariable(ast.getName()));
+        return null;
+        /*String name = ast.getName();
         Optional<String> typeName = Optional.ofNullable(ast.getTypeName());
         Optional<Ast.Expression> value = ast.getValue();
 
@@ -104,7 +115,7 @@ public final class Analyzer implements Ast.Visitor<Void> {
 
         ast.setVariable(variable);
 
-        return null;
+        return null;*/
     }
 
     @Override
@@ -482,10 +493,13 @@ public final class Analyzer implements Ast.Visitor<Void> {
 
     @Override
     public Void visit(Ast.Expression.PlcList ast) {
-        for (Ast.Expression expression : ast.getValues()) {
-            visit(expression);
+        //Environment.Type elementType = ast.getType();
+        List<Ast.Expression> elements = ast.getValues();
+        for (Ast.Expression element : elements) {
+            visit(element);
+            requireAssignable(Environment.Type.DECIMAL, element.getType());
         }
-        return null;  // TODO
+        return null;
     }
 
     public static void requireAssignable(Environment.Type target, Environment.Type type) {

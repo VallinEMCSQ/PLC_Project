@@ -4,10 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="New files for Analyzer">
+    <list default="true" id="57152416-eb3d-44b7-9072-a32b160495fb" name="Changes" comment="Extra Generator Test Cases">
+      <change afterPath="$PROJECT_DIR$/src/test/java/plc/project/EndToEndGeneratorTests.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/plc/project/EndToEndInterpreterTests.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/plc/project/Analyzer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/plc/project/Analyzer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/plc/project/Generator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/plc/project/Generator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/plc/project/GeneratorTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/plc/project/GeneratorTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/plc/project/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/plc/project/Lexer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/plc/project/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/plc/project/Parser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/plc/project/LexerTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/plc/project/LexerTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/plc/project/ParserModifiedTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/plc/project/ParserModifiedTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +56,15 @@
     "Gradle.Build PLC_Project.executor": "Run",
     "JUnit.AnalyzerTests.executor": "Run",
     "JUnit.AnalyzerTests.testLiteralExpression.executor": "Run",
+    "JUnit.EndToEndGeneratorTests.executor": "Run",
+    "JUnit.EndToEndGeneratorTests.testList.executor": "Debug",
+    "JUnit.EndToEndGeneratorTests.testSource.executor": "Debug",
+    "JUnit.EndToEndInterpreterTests.executor": "Run",
+    "JUnit.EndToEndInterpreterTests.testBinaryExpression.executor": "Run",
+    "JUnit.EndToEndInterpreterTests.testGlobal.executor": "Run",
+    "JUnit.EndToEndInterpreterTests.testGroupExpression.executor": "Run",
+    "JUnit.EndToEndInterpreterTests.testList.executor": "Run",
+    "JUnit.EndToEndInterpreterTests.testSwitchStatement.executor": "Run",
     "JUnit.GeneratorTests.executor": "Run",
     "JUnit.GeneratorTests.testBinaryExpression.executor": "Run",
     "JUnit.InterpreterTests.executor": "Run",
@@ -59,12 +74,16 @@
     "JUnit.InterpreterTests.testSwitchStatement.executor": "Run",
     "JUnit.LexerTests.executor": "Run",
     "JUnit.LexerTests.testCharacter.executor": "Run",
+    "JUnit.LexerTests.testDecimal.executor": "Debug",
     "JUnit.LexerTests.testExamples.executor": "Run",
     "JUnit.LexerTests.testException.executor": "Run",
     "JUnit.ParserExpressionTests.executor": "Run",
     "JUnit.ParserExpressionTests.testExpressionStatement.executor": "Debug",
     "JUnit.ParserExpressionTests.testFunctionExpression.executor": "Run",
     "JUnit.ParserExpressionTests.testScenarioParseException.executor": "Run",
+    "JUnit.ParserModifiedTests.executor": "Run",
+    "JUnit.ParserModifiedTests.testDeclarationStatement.executor": "Run",
+    "JUnit.ParserModifiedTests.testSource.executor": "Run",
     "JUnit.ParserTests.executor": "Run",
     "JUnit.ParserTests.testExample1.executor": "Run",
     "JUnit.ParserTests.testReturnStatement.executor": "Run",
@@ -88,12 +107,12 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\valca\OneDrive\Documents\UF School\Spring 2024\CIS4020\IntelliJ Projects\PLC_Project\src\main\java\plc\project" />
       <recent name="C:\Users\valca\OneDrive\Documents\UF School\Spring 2024\CIS4020\IntelliJ Projects\PLC_Project\src\test\java\plc\project" />
+      <recent name="C:\Users\valca\OneDrive\Documents\UF School\Spring 2024\CIS4020\IntelliJ Projects\PLC_Project\src\main\java\plc\project" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.GeneratorTests">
-    <configuration name="AnalyzerTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager">
+    <configuration name="EndToEndGeneratorTests.testList" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PLC_Project.test" />
       <extension name="coverage">
         <pattern>
@@ -102,29 +121,14 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.AnalyzerTests" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="AnalyzerTests.testLiteralExpression" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="PLC_Project.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="plc.project.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.AnalyzerTests" />
-      <option name="METHOD_NAME" value="testLiteralExpression(java.lang.String,plc.project.Ast$Expression$Literal,plc.project.Ast$Expression$Literal)" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.EndToEndGeneratorTests" />
+      <option name="METHOD_NAME" value="testList" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="GeneratorTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="EndToEndGeneratorTests.testSource" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PLC_Project.test" />
       <extension name="coverage">
         <pattern>
@@ -133,29 +137,14 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.GeneratorTests" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="GeneratorTests.testBinaryExpression" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="PLC_Project.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="plc.project.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.GeneratorTests" />
-      <option name="METHOD_NAME" value="testBinaryExpression(java.lang.String,plc.project.Ast$Expression$Binary,java.lang.String)" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.EndToEndGeneratorTests" />
+      <option name="METHOD_NAME" value="testSource(java.lang.String,java.lang.String,java.lang.String)" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="InterpreterTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="EndToEndInterpreterTests.testBinaryExpression" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PLC_Project.test" />
       <extension name="coverage">
         <pattern>
@@ -164,19 +153,52 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="plc.project" />
-      <option name="MAIN_CLASS_NAME" value="plc.project.InterpreterTests" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.EndToEndInterpreterTests" />
+      <option name="METHOD_NAME" value="testBinaryExpression(java.lang.String,java.lang.String,java.lang.Object)" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EndToEndInterpreterTests.testSwitchStatement" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PLC_Project.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="plc.project.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="plc.project" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.EndToEndInterpreterTests" />
+      <option name="METHOD_NAME" value="testSwitchStatement" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ParserModifiedTests.testDeclarationStatement" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PLC_Project.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="plc.project.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="plc.project" />
+      <option name="MAIN_CLASS_NAME" value="plc.project.ParserModifiedTests" />
+      <option name="METHOD_NAME" value="testDeclarationStatement(java.lang.String,java.util.List,plc.project.Ast$Statement$Declaration)" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.GeneratorTests" />
-        <item itemvalue="JUnit.GeneratorTests.testBinaryExpression" />
-        <item itemvalue="JUnit.AnalyzerTests" />
-        <item itemvalue="JUnit.AnalyzerTests.testLiteralExpression" />
-        <item itemvalue="JUnit.InterpreterTests" />
+        <item itemvalue="JUnit.ParserModifiedTests.testDeclarationStatement" />
+        <item itemvalue="JUnit.EndToEndGeneratorTests.testSource" />
+        <item itemvalue="JUnit.EndToEndGeneratorTests.testList" />
+        <item itemvalue="JUnit.EndToEndInterpreterTests.testSwitchStatement" />
+        <item itemvalue="JUnit.EndToEndInterpreterTests.testBinaryExpression" />
       </list>
     </recent_temporary>
   </component>
@@ -209,6 +231,8 @@
       <workItem from="1711145975825" duration="15588000" />
       <workItem from="1711996132715" duration="19133000" />
       <workItem from="1712371400136" duration="23585000" />
+      <workItem from="1714242282594" duration="10000" />
+      <workItem from="1714417412246" duration="61528000" />
     </task>
     <task id="LOCAL-00001" summary="Mostly finished lexer">
       <option name="closed" value="true" />
@@ -298,7 +322,15 @@
       <option name="project" value="LOCAL" />
       <updated>1711996903550</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Extra Generator Test Cases">
+      <option name="closed" value="true" />
+      <created>1713669814430</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1713669814430</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -315,7 +347,8 @@
     <MESSAGE value="All Parser test cases running" />
     <MESSAGE value="Interpreter Files" />
     <MESSAGE value="New files for Analyzer" />
-    <option name="LAST_COMMIT_MESSAGE" value="New files for Analyzer" />
+    <MESSAGE value="Extra Generator Test Cases" />
+    <option name="LAST_COMMIT_MESSAGE" value="Extra Generator Test Cases" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -328,6 +361,26 @@
           <url>file://$PROJECT_DIR$/src/main/java/plc/project/Environment.java</url>
           <line>257</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/plc/project/Interpreter.java</url>
+          <line>31</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/plc/project/Analyzer.java</url>
+          <line>495</line>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/plc/project/Parser.java</url>
+          <line>213</line>
+          <option name="timeStamp" value="47" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/plc/project/Parser.java</url>
+          <line>73</line>
+          <option name="timeStamp" value="48" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
