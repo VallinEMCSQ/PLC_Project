@@ -29,11 +29,18 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
 
     @Override
     public Environment.PlcObject visit(Ast.Source ast) {
-        ast.getGlobals().forEach(this::visit);
+        for (Ast.Global global : ast.getGlobals()) {
+            visit(global);
+        }
+        for (Ast.Function function : ast.getFunctions()) {
+            visit(function);
+        }
 
-        ast.getFunctions().forEach(this::visit);
+        List<Environment.PlcObject> arguments = new ArrayList<Environment.PlcObject>();
+        Environment.PlcObject object = scope.lookupFunction("main", 0).invoke(arguments);
+        return object;
 
-        try {
+        /*try {
             Environment.Function mainFunction = scope.lookupFunction("main", 0);
 
             List<Environment.PlcObject> arguments = new ArrayList<>();
@@ -43,7 +50,7 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
             return result;
         } catch (Exception e) {
             return Environment.NIL;
-        }
+        }*/
     }
 
     @Override
@@ -58,20 +65,19 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
 
     @Override
     public Environment.PlcObject visit(Ast.Function ast) {
+        Scope oldScope = scope;
         scope.defineFunction(ast.getName(), ast.getParameters().size(), args -> {
-            Scope oldScope = scope;
             scope = new Scope(oldScope);
-            for (int i = 0; i < ast.getParameters().size(); i++) {
-                scope.defineVariable(ast.getParameters().get(i), true, args.get(i));
-            }
+
             try {
-                for (Ast.Statement statement : ast.getStatements()) {
-                    visit(statement);
+                for (int i = 0; i < ast.getParameters().size(); i++) {
+                    scope.defineVariable(ast.getParameters().get(i), true, args.get(i));
                 }
+                ast.getStatements().forEach(this::visit);
             } catch (Return returnValue) {
                 return returnValue.value;
             } finally {
-                scope = oldScope;
+                scope = scope.getParent();
             }
             return Environment.NIL;
         });
@@ -80,22 +86,18 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
 
     @Override
     public Environment.PlcObject visit(Ast.Statement.Expression ast) {
-        return visit(ast.getExpression());
+        visit(ast.getExpression());
+        return Environment.NIL;
     }
 
     @Override
     public Environment.PlcObject visit(Ast.Statement.Declaration ast) {
-        Optional optional = ast.getValue();
-        Optional<Ast.Expression> op1 = ast.getValue();
-        Boolean present = optional.isPresent();
+        //Optional optional = ast.getValue();
+        //Optional<Ast.Expression> op1 = ast.getValue();
+        //Boolean present = optional.isPresent();
 
-        if (present){
-            Object object = optional.get();
-            System.out.println(object.toString());
-
-            Ast.Expression expr = (Ast.Expression) optional.get();
-            Ast.Expression expr1 = op1.get();
-
+        if (ast.getValue().isPresent()){
+            Ast.Expression expr = ast.getValue().get();
             scope.defineVariable(ast.getName(), true, visit(expr));
         } else {
             scope.defineVariable(ast.getName(), true, Environment.NIL);
@@ -105,6 +107,7 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
 
     @Override
     public Environment.PlcObject visit(Ast.Statement.Assignment ast) {
+
         Environment.PlcObject value = visit(ast.getValue());
 
         if (ast.getReceiver() instanceof Ast.Expression.Access) {
@@ -241,7 +244,141 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
 
     @Override
     public Environment.PlcObject visit(Ast.Expression.Binary ast) {
-        Environment.PlcObject leftValue = visit(ast.getLeft());
+        String operator = ast.getOperator();
+        if(operator.equals(">") || operator.equals("<")){
+            // Get left and right values
+            Environment.PlcObject rightValue = visit(ast.getRight());
+            Environment.PlcObject leftValue = visit(ast.getLeft());
+
+            // Check if both are comparable
+            requireType(leftValue.getValue().getClass(), rightValue);
+            requireType(Comparable.class, rightValue);
+            requireType(Comparable.class, leftValue);
+
+            // Set as comparable objects
+            Comparable<Object> right = (Comparable<Object>) rightValue.getValue();
+            Comparable<Object> left = (Comparable<Object>) leftValue.getValue();
+
+            // Compare the values
+            int result = left.compareTo(right);
+
+            // Return the result
+            if(operator.equals(">")){
+                if (result > 0){
+                    return Environment.create(true);
+                } else {
+                    return Environment.create(false);
+                }
+            } else {
+                if (result < 0){
+                    return Environment.create(true);
+                } else {
+                    return Environment.create(false);
+                }
+            }
+
+        } else if (operator.equals("+")) {
+            Environment.PlcObject rightValue = visit(ast.getRight());
+            Environment.PlcObject leftValue = visit(ast.getLeft());
+
+            if (rightValue.getValue().getClass() == String.class || leftValue.getValue().getClass() == String.class){
+                return Environment.create(leftValue.getValue().toString() + rightValue.getValue().toString());
+            } else if (rightValue.getValue().getClass() == BigDecimal.class){
+                requireType(BigDecimal.class, leftValue);
+                return Environment.create(((BigDecimal) leftValue.getValue()).add((BigDecimal) rightValue.getValue()));
+            } else if (rightValue.getValue().getClass() == BigInteger.class){
+                requireType(BigInteger.class, leftValue);
+                return Environment.create(((BigInteger) leftValue.getValue()).add((BigInteger) rightValue.getValue()));
+            } else {
+                throw new RuntimeException("Unsupported operand types for operator +");
+            }
+        } else if (operator.equals("^")) {
+            Environment.PlcObject rightValue = visit(ast.getRight());
+            Environment.PlcObject leftValue = visit(ast.getLeft());
+
+            requireType(BigInteger.class, rightValue);
+
+            if (leftValue.getValue().getClass() == BigDecimal.class){
+                return Environment.create(((BigDecimal) leftValue.getValue()).pow(((BigInteger) rightValue.getValue()).intValue(), MathContext.DECIMAL64));
+            } else if (leftValue.getValue().getClass() == BigInteger.class){
+                return Environment.create(((BigInteger) leftValue.getValue()).pow(((BigInteger) rightValue.getValue()).intValue()));
+            } else {
+                throw new RuntimeException("Unsupported operand types for operator ^");
+            }
+        } else if (operator.equals("-")) {
+            Environment.PlcObject rightValue = visit(ast.getRight());
+            Environment.PlcObject leftValue = visit(ast.getLeft());
+
+            if (rightValue.getValue().getClass() == BigDecimal.class){
+                requireType(BigDecimal.class, leftValue);
+                return Environment.create(((BigDecimal) leftValue.getValue()).subtract((BigDecimal) rightValue.getValue()));
+            } else if (rightValue.getValue().getClass() == BigInteger.class){
+                requireType(BigInteger.class, leftValue);
+                return Environment.create(((BigInteger) leftValue.getValue()).subtract((BigInteger) rightValue.getValue()));
+            } else {
+                throw new RuntimeException("Unsupported operand types for operator -");
+            }
+        } else if (operator.equals("*")) {
+            Environment.PlcObject rightValue = visit(ast.getRight());
+            Environment.PlcObject leftValue = visit(ast.getLeft());
+
+            if (rightValue.getValue().getClass() == BigDecimal.class){
+                requireType(BigDecimal.class, leftValue);
+                return Environment.create(((BigDecimal) leftValue.getValue()).multiply((BigDecimal) rightValue.getValue()));
+            } else if (rightValue.getValue().getClass() == BigInteger.class){
+                requireType(BigInteger.class, leftValue);
+                return Environment.create(((BigInteger) leftValue.getValue()).multiply((BigInteger) rightValue.getValue()));
+            } else {
+                throw new RuntimeException("Unsupported operand types for operator *");
+            }
+        } else if (operator.equals("/")) {
+            Environment.PlcObject rightValue = visit(ast.getRight());
+            Environment.PlcObject leftValue = visit(ast.getLeft());
+
+            if (rightValue.getValue().equals(BigDecimal.ZERO) || rightValue.getValue().equals(BigInteger.ZERO)){
+                throw new RuntimeException("Division by zero");
+            }
+
+            if(rightValue.getValue().getClass() == BigDecimal.class){
+                requireType(BigDecimal.class, leftValue);
+                return Environment.create(((BigDecimal) leftValue.getValue()).divide((BigDecimal) rightValue.getValue(), RoundingMode.HALF_EVEN));
+            } else if (rightValue.getValue().getClass() == BigInteger.class){
+                requireType(BigInteger.class, leftValue);
+                return Environment.create(((BigInteger) leftValue.getValue()).divide((BigInteger) rightValue.getValue()));
+            } else {
+                throw new RuntimeException("Unsupported operand types for operator /");
+
+            }
+        } else if (operator.equals("==") || operator.equals("!=")) {
+            Environment.PlcObject rightValue = visit(ast.getRight());
+            Environment.PlcObject leftValue = visit(ast.getLeft());
+
+            if (operator.equals("==")){
+                return Environment.create(leftValue.getValue().equals(rightValue.getValue()));
+            } else {
+                return Environment.create(!leftValue.getValue().equals(rightValue.getValue()));
+            }
+        } else if (operator.equals("&&") || operator.equals("||")) {
+            Environment.PlcObject leftValue = visit(ast.getLeft());
+            requireType(Boolean.class, leftValue);
+
+            if(leftValue.getValue().equals(true) && operator.equals("||")){
+                return Environment.create(true);
+            } else if(leftValue.getValue().equals(false) && operator.equals("&&")){
+                return Environment.create(false);
+            } else{
+                Environment.PlcObject rightValue = visit(ast.getRight());
+                requireType(Boolean.class, rightValue);
+                if (operator.equals("&&")){
+                    return Environment.create((boolean) leftValue.getValue() && (boolean) rightValue.getValue());
+                } else {
+                    return Environment.create((boolean) leftValue.getValue() || (boolean) rightValue.getValue());
+                }
+            }
+        } else {
+            throw new RuntimeException("Unsupported binary expression");
+        }
+        /*Environment.PlcObject leftValue = visit(ast.getLeft());
 
         if (ast.getOperator().equals("||") && (boolean) leftValue.getValue()) {
             return leftValue;
@@ -314,7 +451,7 @@ public class Interpreter implements Ast.Visitor<Environment.PlcObject> {
                 }
             default:
                 throw new UnsupportedOperationException("Unsupported binary operator: " + ast.getOperator());
-        }
+        }*/
     }
 
     @Override

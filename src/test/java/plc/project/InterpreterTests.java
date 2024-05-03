@@ -368,7 +368,113 @@ final class InterpreterTests {
                                 new Ast.Expression.Literal(new BigDecimal("3.4"))
                         ),
                         new BigDecimal("0.4")
+                ),
+                // TRUE && FALSE
+                Arguments.of("And",
+                        new Ast.Expression.Binary("&&",
+                                new Ast.Expression.Literal(true),
+                                new Ast.Expression.Literal(false)
+                        ),
+                        false
+                ),
+                // TRUE || FALSE
+                Arguments.of("Or",
+                        new Ast.Expression.Binary("||",
+                                new Ast.Expression.Literal(true),
+                                new Ast.Expression.Literal(false)
+                        ),
+                        true
+                ),
+                // FALSE && undefined
+                Arguments.of("And (Short Circuit)",
+                        new Ast.Expression.Binary("&&",
+                                new Ast.Expression.Literal(false),
+                                new Ast.Expression.Access(Optional.empty(), "undefined")
+                        ),
+                        false
+                ),
+                // 1 < 10
+                Arguments.of("Less Than",
+                        new Ast.Expression.Binary("<",
+                                new Ast.Expression.Literal(BigInteger.ONE),
+                                new Ast.Expression.Literal(BigInteger.TEN)
+                        ),
+                        true
+                ),
+                // 1 > 10
+                Arguments.of("Greater Than",
+                        new Ast.Expression.Binary(">",
+                                new Ast.Expression.Literal(BigInteger.ONE),
+                                new Ast.Expression.Literal(BigInteger.TEN)
+                        ),
+                        false
+                ),
+                // 1 != 10
+                Arguments.of("Not Equal",
+                        new Ast.Expression.Binary("!=",
+                                new Ast.Expression.Literal(BigInteger.ONE),
+                                new Ast.Expression.Literal(BigInteger.TEN)
+                        ),
+                        true
+                ),
+                // NIL == NIL
+                Arguments.of("Nil Equal",
+                        new Ast.Expression.Binary("==",
+                                new Ast.Expression.Literal(null),
+                                new Ast.Expression.Literal(null)
+                        ),
+                        true
+                ),
+                // 1 != "1"
+                Arguments.of("Type Mismatch",
+                        new Ast.Expression.Binary("!=",
+                                new Ast.Expression.Literal(BigInteger.ONE),
+                                new Ast.Expression.Literal("1")
+                        ),
+                        false
+                ),
+                // "a" + "bc"
+                Arguments.of("Concatenation",
+                        new Ast.Expression.Binary("+",
+                                new Ast.Expression.Literal("a"),
+                                new Ast.Expression.Literal("bc")
+                        ),
+                        "abc"
+                ),
+                // 1 + 2 * 3
+                Arguments.of("Order of Operations",
+                        new Ast.Expression.Binary("+",
+                                new Ast.Expression.Literal(BigInteger.ONE),
+                                new Ast.Expression.Binary("*",
+                                        new Ast.Expression.Literal(BigInteger.TWO),
+                                        new Ast.Expression.Literal(BigInteger.valueOf(3))
+                                )
+                        ),
+                        BigInteger.valueOf(7)
+                ),
+                // 1 + 2 * 3 / 4
+                Arguments.of("Order of Operations",
+                        new Ast.Expression.Binary("+",
+                                new Ast.Expression.Literal(BigInteger.ONE),
+                                new Ast.Expression.Binary("/",
+                                        new Ast.Expression.Binary("*",
+                                                new Ast.Expression.Literal(BigInteger.TWO),
+                                                new Ast.Expression.Literal(BigInteger.valueOf(3))
+                                        ),
+                                        new Ast.Expression.Literal(BigInteger.valueOf(4))
+                                )
+                        ),
+                        new BigDecimal("2.5")
+                ),
+                // 1 - "String"
+                Arguments.of("Type Mismatch",
+                        new Ast.Expression.Binary("-",
+                                new Ast.Expression.Literal(BigInteger.ONE),
+                                new Ast.Expression.Literal("String")
+                        ),
+                        Environment.NIL.getValue()
                 )
+
         );
     }
 

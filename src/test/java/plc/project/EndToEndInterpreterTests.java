@@ -18,6 +18,23 @@ import java.util.function.Function;
 
 final class EndToEndInterpreterTests {
 
+
+    @ParameterizedTest
+    @MethodSource
+    void testStatement(String test, String input, Object expected) {
+        test(input, expected, new Scope(null), Parser::parseFunction);
+    }
+
+    private static Stream<Arguments> testStatement() {
+        return Stream.of(
+                // function for logarithm
+                Arguments.of("Logarithm",
+                        "FUN log(x: Decimal, base: Decimal): Decimal DO RETURN log(x) / log(base); END",
+                        Environment.NIL.getValue()
+                )
+        );
+    }
+
     @ParameterizedTest
     @MethodSource
     void testSource(String test, String input, Object expected) {

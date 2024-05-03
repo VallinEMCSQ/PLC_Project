@@ -354,8 +354,8 @@ public final class Analyzer implements Ast.Visitor<Void> {
     public Void visit(Ast.Statement.Return ast) {
         try {
             visit(ast.getValue());
-            Environment.Variable variable = scope.lookupVariable("Return");
-            requireAssignable(variable.getType(), ast.getValue().getType());
+            Environment.Type type = scope.lookupVariable("Return").getType();
+            requireAssignable(type, ast.getValue().getType());
         } catch (RuntimeException r) {
             throw new RuntimeException(r);
         }
@@ -493,11 +493,11 @@ public final class Analyzer implements Ast.Visitor<Void> {
 
     @Override
     public Void visit(Ast.Expression.PlcList ast) {
-        //Environment.Type elementType = ast.getType();
+        Environment.Type elementType = ast.getType();
         List<Ast.Expression> elements = ast.getValues();
         for (Ast.Expression element : elements) {
             visit(element);
-            requireAssignable(Environment.Type.DECIMAL, element.getType());
+            requireAssignable(elementType, element.getType());
         }
         return null;
     }

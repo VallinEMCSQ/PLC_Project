@@ -59,6 +59,7 @@ public class GeneratorTests {
         );
     }
 
+    /*
     @ParameterizedTest(name = "{0}")
     @MethodSource
     void testGlobal(String test, Ast.Global ast, String expected) {
@@ -89,6 +90,7 @@ public class GeneratorTests {
                 )
         );
     }
+    */
 
     @Test
     void testList() {

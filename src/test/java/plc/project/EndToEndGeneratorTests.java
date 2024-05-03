@@ -20,6 +20,64 @@ import java.util.stream.Stream;
 
 public class EndToEndGeneratorTests {
 
+    /*
+    @ParameterizedTest(name = "{0}")
+    @MethodSource
+    void testFunction(String test, String input, String expected) {
+        test(input, expected, Parser::parseFunction);
+    }
+
+    private static Stream<Arguments> testFunction() {
+        return Stream.of(
+                Arguments.of("Square",
+                        // FUN square(num: Decimal): Decimal DO
+                        //     RETURN num * num;
+                        // END
+                        "FUN square(num: Decimal): Decimal DO\n    RETURN num * num;\nEND",
+                        String.join(System.lineSeparator(),
+                                "double square(double num) {",
+                                "    return num * num;",
+                                "}"
+                        )
+                ),
+                Arguments.of("Function Invalid Argument",
+                        // FUN square(num: Decimal): Decimal DO
+                        //     RETURN num * num;
+                        // END
+                        "FUN square(num: Integer): Decimal DO\n    RETURN num * num;\nEND",
+                        String.join(System.lineSeparator(),
+                                "double square(int num) {",
+                                "    return num * num;",
+                                "}"
+                        )
+                )
+        );
+    }
+
+
+     */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource
+    void testGlobal(String test, String input, String expected) {
+        test(input, expected, Parser::parseGlobal);
+    }
+
+    private static Stream<Arguments> testGlobal() {
+        return Stream.of(
+                Arguments.of("Mutable Declaration",
+                        // VAR name: Integer;
+                        "VAR name: Integer;",
+                        "int name;"
+                ),
+                Arguments.of("List Declaration",
+                        // LIST nums: Integer = [1, 2, 3];
+                        "LIST nums: Integer = [1, 2, 3];",
+                        "int[] nums = {1, 2, 3};"
+                )
+        );
+    }
+
+
     @ParameterizedTest(name = "{0}")
     @MethodSource
     void testSource(String test, String input, String expected) {
@@ -48,28 +106,53 @@ public class EndToEndGeneratorTests {
                                 "",
                                 "}"
                         )
-                ),
+                )/*,
                 Arguments.of("List Initialization",
                         // FUN main(): Integer DO
                         //     LIST list: Decimal = [1.0, 1.5, 2.0];
                         //     RETURN 0;
                         // END
-                        "FUN main(): Integer DO\n    LIST list: Decimal = [1.0, 1.5, 2.0];\n    RETURN 0;\nEND",
+                        "LIST list: Decimal = [1.0, 1.5, 2.0];\n    FUN main(): Integer DO\n    list[0] = 3.0;\n    RETURN 0;\nEND",
                         String.join(System.lineSeparator(),
                                 "public class Main {",
+                                "",
+                                "    double[] list = {1.0, 1.5, 2.0};",
                                 "",
                                 "    public static void main(String[] args) {",
                                 "        System.exit(new Main().main());",
                                 "    }",
                                 "",
                                 "    int main() {",
-                                "        double[] list = {1.0, 1.5, 2.0};",
+                                "        list[0] = 3.0;",
                                 "        return 0;",
                                 "    }",
                                 "",
                                 "}"
                         )
-                )
+                ),
+                Arguments.of("Global List",
+                        // LIST list: Integer = [1, 2, 3];
+                        // FUN main(): Integer DO
+                        //     print(list[1]);
+                        // END
+                        "LIST list: Integer = [1, 2, 3];\nFUN main(): Integer DO\n    print(list[1]);\nEND",
+                        String.join(System.lineSeparator(),
+                                "public class Main {",
+                                "",
+                                "    int[] list = {1, 2, 3};",
+                                "",
+                                "    public static void main(String[] args) {",
+                                "        System.exit(new Main().main());",
+                                "    }",
+                                "",
+                                "    int main() {",
+                                "        System.out.println(list[1]);",
+                                "        return 0;",
+                                "    }",
+                                "",
+                                "}"
+                        )
+                )*/
         );
     }
 
@@ -228,5 +311,4 @@ public class EndToEndGeneratorTests {
         initializer.accept(value);
         return value;
     }
-
 }

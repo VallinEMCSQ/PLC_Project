@@ -1,5 +1,6 @@
 package plc.project;
 
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import javax.swing.text.html.HTMLDocument;
 import java.util.List;
 
@@ -41,6 +42,12 @@ public final class Parser {
         while (peek("FUN")){
             functionList.add(parseFunction());
         }
+        if(peek()){
+
+        }
+        if (this.tokens.has(0)){
+            throw new ParseException("Invalid Source", tokens.index);
+        }
         return new Ast.Source(globalList, functionList);
     }
 
@@ -51,7 +58,6 @@ public final class Parser {
     public Ast.Global parseGlobal() throws ParseException {
         Ast.Global global = null;
         if(peek("LIST")){
-            match("LIST");
             global = parseList();
         } else if (peek("VAR")) {
             match("VAR");
@@ -60,7 +66,13 @@ public final class Parser {
             match("VAL");
             global = parseImmutable();
         } else {
-            throw new ParseException("Invalid Global", tokens.index);
+
+            if (tokens.has(0)){
+                throw new ParseException("Invalid Global", tokens.get(0).getIndex());
+            }
+            Token prevToken = tokens.get(-1);
+            int tokenLength = prevToken.getLiteral().length();
+            throw new ParseException("Invalid Global", prevToken.getIndex() + tokenLength);
         }
         match(";");
         return global;
@@ -71,28 +83,39 @@ public final class Parser {
      * next token declares a list, aka {@code LIST}.
      */
     public Ast.Global parseList() throws ParseException {
+        match("LIST");
         if(peek(Token.Type.IDENTIFIER)){
             String identifier = tokens.get(0).getLiteral();
             match(identifier);
-            List<Ast.Expression> value = new ArrayList<Ast.Expression>();
+            List<Ast.Expression> values = new ArrayList<Ast.Expression>();
             if(match(":")) {
                 String typeIdentifier = tokens.get(0).getLiteral();
                 match(typeIdentifier);
                 if (match("=")) {
                     if (match("[")) {
-                        value.add(parseExpression());
-                        while (match(",")) {
-                            value.add(parseExpression());
+                        if (!match("]")) {
+
+                            values.add(parseExpression());
+                            while (match(",")) {
+                                values.add(parseExpression());
+                            }
+                            if (match("]")) {
+                                Ast.Expression.PlcList plcList = new Ast.Expression.PlcList(values);
+                                return new Ast.Global(identifier, typeIdentifier, true, Optional.of(plcList));
+                            }
                         }
-                        if (match("]")) {
-                            Ast.Expression.PlcList plcList = new Ast.Expression.PlcList(value);
-                            return new Ast.Global(identifier, typeIdentifier,true, Optional.of(plcList));
-                        }
+                        Ast.Expression.PlcList plcList = new Ast.Expression.PlcList(values);
+                        return new Ast.Global(identifier, typeIdentifier, true, Optional.of(plcList));
                     }
                 }
             }
         }
-        throw new ParseException("Invalid List", tokens.index);
+        if (tokens.has(0)){
+            throw new ParseException("Invalid List", tokens.get(0).getIndex());
+        }
+        Token prevToken = tokens.get(-1);
+        int tokenLength = prevToken.getLiteral().length();
+        throw new ParseException("Invalid List", prevToken.getIndex() + tokenLength);
     }
 
     /**
@@ -112,8 +135,18 @@ public final class Parser {
                     return new Ast.Global(identifier, typeIdentifier,true, Optional.empty());
                 }
             }
+            if (match("=")) {
+                return new Ast.Global(identifier,true, Optional.of(parseExpression()));
+            } else {
+                return new Ast.Global(identifier,true, Optional.empty());
+            }
         }
-        throw new ParseException("Invalid Mutable", tokens.index);
+        if (tokens.has(0)){
+            throw new ParseException("Invalid Mutable", tokens.get(0).getIndex());
+        }
+        Token prevToken = tokens.get(-1);
+        int tokenLength = prevToken.getLiteral().length();
+        throw new ParseException("Invalid Mutable", prevToken.getIndex() + tokenLength);
     }
 
     /**
@@ -131,8 +164,18 @@ public final class Parser {
                     return new Ast.Global(identifier, typeIdentifier,false, Optional.of(parseExpression()));
                 }
             }
+            if (match("=")) {
+                return new Ast.Global(identifier,false, Optional.of(parseExpression()));
+            } else {
+                return new Ast.Global(identifier,false, Optional.empty());
+            }
         }
-        throw new ParseException("Invalid Immutable", tokens.index);
+        if (tokens.has(0)){
+            throw new ParseException("Invalid Immutable", tokens.get(0).getIndex());
+        }
+        Token prevToken = tokens.get(-1);
+        int tokenLength = prevToken.getLiteral().length();
+        throw new ParseException("Invalid Immutable", prevToken.getIndex() + tokenLength);
     }
 
     /**
@@ -140,10 +183,16 @@ public final class Parser {
      * next tokens start a method, aka {@code FUN}.
      */
     public Ast.Function parseFunction() throws ParseException {
-        match("FUN");
-
+        if(!match("FUN")){
+            if (tokens.has(0)){
+                throw new ParseException("Invalid Function: Expected FUN", tokens.get(0).getIndex());
+            }
+            Token prevToken = tokens.get(-1);
+            int tokenLength = prevToken.getLiteral().length();
+            throw new ParseException("Invalid Function: Expected FUN", prevToken.getIndex() + tokenLength);
+        }
         String identifier;
-        String typeIdentifier = null;
+        String typeIdentifier = "Any";
         List<String> parameters = new ArrayList<>();
         List<String> typeParameters = new ArrayList<>();
         List<Ast.Statement> statements = new ArrayList<>();
@@ -162,13 +211,23 @@ public final class Parser {
                             match(Token.Type.IDENTIFIER);
                         }
                         else {
-                            throw new ParseException("Expected colon", tokens.index);
+                            if (tokens.has(0)){
+                                throw new ParseException("Expected colon", tokens.get(0).getIndex());
+                            }
+                            Token prevToken = tokens.get(-1);
+                            int tokenLength = prevToken.getLiteral().length();
+                            throw new ParseException("Expected colon", prevToken.getIndex() + tokenLength);
                         }
                     } while (match(","));
                 }
 
                 if (!match(")")) {
-                    throw new ParseException("Invalid Function", tokens.index);
+                    if (tokens.has(0)){
+                        throw new ParseException("Invalid Function", tokens.get(0).getIndex());
+                    }
+                    Token prevToken = tokens.get(-1);
+                    int tokenLength = prevToken.getLiteral().length();
+                    throw new ParseException("Invalid Function", prevToken.getIndex() + tokenLength);
                 }
 
                 if (match(":")) {
@@ -184,16 +243,25 @@ public final class Parser {
 
                 if (match("END")) {
                     if(typeIdentifier == null){
-                        return new Ast.Function(identifier, parameters, typeParameters, Optional.empty(), statements);
+                        return new Ast.Function(identifier, parameters, typeParameters, Optional.of(typeIdentifier), statements);
                     }
                     return new Ast.Function(identifier, parameters, typeParameters, Optional.of(typeIdentifier), statements);
                 } else {
-                    throw new ParseException("Expected END", tokens.index);
+                    if (tokens.has(0)){
+                        throw new ParseException("Expected END", tokens.get(0).getIndex());
+                    }
+                    Token prevToken = tokens.get(-1);
+                    int tokenLength = prevToken.getLiteral().length();
+                    throw new ParseException("Expected END", prevToken.getIndex() + tokenLength);
                 }
             }
         }
-
-        throw new ParseException("Invalid Function", tokens.index);
+        if (tokens.has(0)){
+            throw new ParseException("Invalid Function", tokens.get(0).getIndex());
+        }
+        Token prevToken = tokens.get(-1);
+        int tokenLength = prevToken.getLiteral().length();
+        throw new ParseException("Invalid Function", prevToken.getIndex() + tokenLength);
     }
     /**
      * Parses the {@code block} rule. This method should only be called if the
@@ -226,15 +294,26 @@ public final class Parser {
 
             if (match("=")) {
                 Ast.Expression right = parseExpression();
-                if (match(";")) {
+                if (peek(";")) {
                     statement = new Ast.Statement.Assignment(left, right);
                 } else {
-                    throw new ParseException("Expected semicolon", tokens.index);
+                    if (tokens.has(0)){
+                        throw new ParseException("Expected semicolon", tokens.get(0).getIndex());
+                    }
+                    Token prevToken = tokens.get(-1);
+                    int tokenLength = prevToken.getLiteral().length();
+                    throw new ParseException("Expected semicolon", prevToken.getIndex() + tokenLength);
                 }
-            } else if (match(";")) {
-                statement = new Ast.Statement.Expression(left);
             } else {
-                throw new ParseException("Expected semicolon", tokens.index);
+                statement = new Ast.Statement.Expression(left);
+            }
+            if(!match(";")){
+                if (tokens.has(0)){
+                    throw new ParseException("Expected semicolon", tokens.get(0).getIndex());
+                }
+                Token prevToken = tokens.get(-1);
+                int tokenLength = prevToken.getLiteral().length();
+                throw new ParseException("Expected semicolon", prevToken.getIndex() + tokenLength);
             }
         }
 
@@ -251,7 +330,12 @@ public final class Parser {
         match("LET");
 
         if (!peek(Token.Type.IDENTIFIER)) {
-            throw new ParseException("Expected identifier after LET", tokens.index);
+            if (tokens.has(0)){
+                throw new ParseException("Expected identifier after LET", tokens.get(0).getIndex());
+            }
+            Token prevToken = tokens.get(-1);
+            int tokenLength = prevToken.getLiteral().length();
+            throw new ParseException("Expected identifier after LET", prevToken.getIndex() + tokenLength);
         }
 
         String name = tokens.get(0).getLiteral();
@@ -266,7 +350,12 @@ public final class Parser {
                 typeName = Optional.of(tokens.get(0).getLiteral());
                 match(Token.Type.IDENTIFIER);
             } else {
-                throw new ParseException("Expected type name", tokens.index);
+                if (tokens.has(0)){
+                    throw new ParseException("Expected type name", tokens.get(0).getIndex());
+                }
+                Token prevToken = tokens.get(-1);
+                int tokenLength = prevToken.getLiteral().length();
+                throw new ParseException("Expected type name", prevToken.getIndex() + tokenLength);
             }
         }
 
@@ -275,7 +364,12 @@ public final class Parser {
         }
 
         if (!match(";")) {
-            throw new ParseException("Expected semicolon", tokens.index);
+            if (tokens.has(0)){
+                throw new ParseException("Expected semicolon", tokens.get(0).getIndex());
+            }
+            Token prevToken = tokens.get(-1);
+            int tokenLength = prevToken.getLiteral().length();
+            throw new ParseException("Expected semicolon", prevToken.getIndex() + tokenLength);
         }
 
         if (isList){
@@ -310,10 +404,20 @@ public final class Parser {
             if (match("END")) {
                 return new Ast.Statement.If(condition, thenStatements, elseStatements);
             } else {
-                throw new ParseException("Expected END", tokens.index);
+                if (tokens.has(0)){
+                    throw new ParseException("Expected END", tokens.get(0).getIndex());
+                }
+                Token prevToken = tokens.get(-1);
+                int tokenLength = prevToken.getLiteral().length();
+                throw new ParseException("Expected END", prevToken.getIndex() + tokenLength);
             }
         } else {
-            throw new ParseException("Expected DO", tokens.index);
+            if (tokens.has(0)){
+                throw new ParseException("Expected DO", tokens.get(0).getIndex());
+            }
+            Token prevToken = tokens.get(-1);
+            int tokenLength = prevToken.getLiteral().length();
+            throw new ParseException("Expected DO", prevToken.getIndex() + tokenLength);
         }
     }
 
@@ -324,7 +428,12 @@ public final class Parser {
      */
     public Ast.Statement.Switch parseSwitchStatement() throws ParseException {
         if (!match("SWITCH")) {
-            throw new ParseException("Expected SWITCH", tokens.index);
+            if (tokens.has(0)){
+                throw new ParseException("Expected SWITCH", tokens.get(0).getIndex());
+            }
+            Token prevToken = tokens.get(-1);
+            int tokenLength = prevToken.getLiteral().length();
+            throw new ParseException("Expected SWITCH", prevToken.getIndex() + tokenLength);
         }
         Ast.Expression expression = parseExpression();
         List<Ast.Statement.Case> cases = new ArrayList<Ast.Statement.Case>();
@@ -335,7 +444,12 @@ public final class Parser {
         if (match("END")){
             return new Ast.Statement.Switch(expression, cases);
         }
-        throw new ParseException("Invalid Switch Statement", tokens.index);
+        if (tokens.has(0)){
+            throw new ParseException("Expected END", tokens.get(0).getIndex());
+        }
+        Token prevToken = tokens.get(-1);
+        int tokenLength = prevToken.getLiteral().length();
+        throw new ParseException("Invalid Switch Statement", prevToken.getIndex() + tokenLength);
     }
 
     /**
@@ -361,7 +475,12 @@ public final class Parser {
             }
             caseStatement = new Ast.Statement.Case(Optional.empty(), statements);
         } else {
-            throw new ParseException("Invalid Case Statement", tokens.index);
+            if (tokens.has(0)){
+                throw new ParseException("Invalid Case Statement", tokens.get(0).getIndex());
+            }
+            Token prevToken = tokens.get(-1);
+            int tokenLength = prevToken.getLiteral().length();
+            throw new ParseException("Invalid Case Statement", prevToken.getIndex() + tokenLength);
         }
         return caseStatement;
     }
@@ -382,7 +501,12 @@ public final class Parser {
                 return new Ast.Statement.While(condition, statements);
             }
         }
-        throw new ParseException("Invalid While Statement", tokens.index);
+        if (tokens.has(0)){
+            throw new ParseException("Invalid While Statement", tokens.get(0).getIndex());
+        }
+        Token prevToken = tokens.get(-1);
+        int tokenLength = prevToken.getLiteral().length();
+        throw new ParseException("Invalid While Statement", prevToken.getIndex() + tokenLength);
     }
 
     /**
@@ -397,7 +521,12 @@ public final class Parser {
                 return new Ast.Statement.Return(value);
             }
         }
-        throw new ParseException("Invalid Return", tokens.index);
+        if (tokens.has(0)){
+            throw new ParseException("Invalid Return", tokens.get(0).getIndex());
+        }
+        Token prevToken = tokens.get(-1);
+        int tokenLength = prevToken.getLiteral().length();
+        throw new ParseException("Invalid Return", prevToken.getIndex() + tokenLength);
 
     }
 
@@ -516,7 +645,12 @@ public final class Parser {
             if (match(")")) {
                 return output;
             } else {
-                throw new ParseException("Expected closing parenthesis", tokens.index);
+                if(tokens.has(0)) {
+                    throw  new ParseException("Expected Closing Parenthesis", tokens.get(0).getIndex());
+                }
+                Token prevToken = tokens.get(-1);
+                int tokenLength = prevToken.getLiteral().length();
+                throw new ParseException("Expected Closing Parenthesis", prevToken.getIndex() + tokenLength);
             }
         } else if (peek(Token.Type.IDENTIFIER)) {
             String id = tokens.get(0).getLiteral();
@@ -535,7 +669,12 @@ public final class Parser {
                 if (match(")")) {
                     return new Ast.Expression.Function(id, expressions);
                 } else {
-                    throw new ParseException("Expected closing parenthesis", tokens.index);
+                    if(tokens.has(0)) {
+                        throw  new ParseException("Expected closing parenthesis", tokens.get(0).getIndex());
+                    }
+                    Token prevToken = tokens.get(-1);
+                    int tokenLength = prevToken.getLiteral().length();
+                    throw new ParseException("Expected closing parenthesis", prevToken.getIndex() + tokenLength);
                 }
             } else if (peek("[")) {
                 match("[");
@@ -553,7 +692,12 @@ public final class Parser {
             }
         }
 
-        throw new ParseException("Invalid expression", tokens.index);
+        if (tokens.has(0)){
+            throw new ParseException("Invalid expression", tokens.get(0).getIndex());
+        }
+        Token prevToken = tokens.get(-1);
+        int tokenLength = prevToken.getLiteral().length();
+        throw new ParseException("Invalid expression", prevToken.getIndex() + tokenLength);
     }
 
 

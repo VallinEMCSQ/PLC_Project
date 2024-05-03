@@ -56,7 +56,7 @@ public final class Lexer {
     public Token lexToken() {
         if (peek("[A-Za-z@]")){
             return lexIdentifier();
-        } else if (peek("[0-9]") || peek("-", "0-9")) {
+        } else if (peek("-?|[0-9]")){
             return lexNumber();
         } else if (peek("'")) {
             return lexCharacter();
@@ -76,58 +76,59 @@ public final class Lexer {
     }
 
     public Token lexNumber() {
-        Boolean isDecimal = false;
-        Boolean isNegative = false;
-
-        // Checks for negative number
-        if(peek("-")){
-            match("-");
-            isNegative = true;
-        }
-        // Checks for starting zero
-        if(peek("0")){
-            match("0");
-            if (peek("\\.")){
-                match("\\.");
-                if (match("[0-9]")){
-                    if (peek("0")){
-                        throw new ParseException("Invalid Number: Trailing Zero", chars.index);
+        if (match("-")) {
+            if(peek("0")){
+                match("0");
+                if (!peek("\\.")) {
+                    throw new ParseException("Invalid Decimal", chars.index);
+                } else {
+                    match("\\.");
+                    if (!match("[0-9]")) {
+                        throw new ParseException("Invalid Decimal", chars.index);
                     }
-                    isDecimal = true;
+                    while (match("[0-9]")) {
+                    }
+                    //if previous character is zero, then it is invalid
+                    if (chars.get(-1) == '0' && chars.get(-2) != '.'){
+                        throw new ParseException("Invalid Decimal", chars.index);
+                    }
+                    return chars.emit(Token.Type.DECIMAL);
                 }
-                else {
-                    return chars.emit(Token.Type.INTEGER);
+            }
+        }
+
+        if (match("0")) {
+            if (peek("\\.")) {
+                match("\\.");
+                if (!match("[0-9]")) {
+                    throw new ParseException("Invalid Decimal", chars.index);
                 }
+                while (match("[0-9]")) {
+                }
+                // if previous character is zero, then it is invalid
+                if (chars.get(-1) == '0' && chars.get(-2) != '.'){
+                    throw new ParseException("Invalid Decimal", chars.index);
+                }
+                return chars.emit(Token.Type.DECIMAL);
             } else if (peek("[0-9]")){
                 throw new ParseException("Invalid Number", chars.index);
             }
-            if (isNegative && !isDecimal){
-                throw new ParseException("Invalid Number: Negative Zero", chars.index);
-            }
         }
-
-        while(peek("[0-9]") && !isDecimal){
-            match("[0-9]");
-        }
-
-        // Checks for decimal
+        // match negative sign
+        match("-");
+        match("[1-9]");
+        while(match("[0-9]")){}
         if(peek("\\.", "[0-9]")){
             match("\\.");
-            isDecimal = true;
-        } else if (!isDecimal){
-            return chars.emit(Token.Type.INTEGER);
-        }
-
-        while (isDecimal && peek("[0-9]")){
             match("[0-9]");
-        }
-
-        if(!isDecimal){
-            return chars.emit(Token.Type.INTEGER);
-        } else {
+            while(match("[0-9]")){}
+            if (chars.get(-1) == '0' && chars.get(-2) != '.') {
+                throw new ParseException("Invalid Decimal", chars.index);
+            }
             return chars.emit(Token.Type.DECIMAL);
+        } else {
+            return chars.emit(Token.Type.INTEGER);
         }
-
     }
 
     public Token lexCharacter() {

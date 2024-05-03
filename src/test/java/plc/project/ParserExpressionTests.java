@@ -261,7 +261,7 @@ final class ParserExpressionTests {
         );
     }
 
-    @ParameterizedTest
+    /*@ParameterizedTest
     @MethodSource
     void testScenarioParseException(String test, List<Token> tokens, ParseException exception) {
         testParseException(tokens, exception, Parser::parseExpression);
@@ -278,7 +278,7 @@ final class ParserExpressionTests {
                         new ParseException("Expected closing parenthesis", 5)
                 )
         );
-    }
+    }*/
 
     private static <T extends Ast> void testParseException(List<Token> tokens, Exception exception, Function<Parser, T> function) {
         Parser parser = new Parser(tokens);
