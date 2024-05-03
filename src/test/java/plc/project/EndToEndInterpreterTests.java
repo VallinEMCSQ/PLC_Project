@@ -372,6 +372,33 @@ final class EndToEndInterpreterTests {
         );
     }
 
+    @Test
+    void testExpressionStatementLog() {
+        // Ensure correct log is generated for expression statement
+        String input = "x = 1;";
+        Scope scope = new Scope(null);
+        PrintStream sysout = System.out;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+        try {
+            test(input, Environment.NIL.getValue(), scope, Parser::parseStatement);
+            Assertions.assertEquals("Assign 'x' = 1" + System.lineSeparator(), out.toString());
+        } finally {
+            System.setOut(sysout);
+        }
+    }
+
+
+    @Test
+    void testFunctionScopeResult() {
+        // Ensure correct result is generated within a Function Scope
+        String input = "FUN testFunction(): Integer DO RETURN 42; END";
+        Scope scope = new Scope(null);
+        test(input, Environment.NIL.getValue(), scope, Parser::parseFunction);
+        // Assuming function result is returned correctly
+        Assertions.assertEquals(BigInteger.valueOf(42), scope.lookupFunction("testFunction", 0).invoke(List.of()).getValue());
+    }
+
     private static <T extends Ast> Scope test(String input, Object expected, Scope scope, Function<Parser, T> function) {
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.lex());
